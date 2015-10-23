@@ -1,13 +1,39 @@
-int ledPin = 6;
-int duty = 127;
+// PID Loop Program
+
+
+//int ledPin = 6;
+int pot = A0;
+double kp = 1;
+double ki = 10;
+double PTerm, ITerm;
+double Error;
+double Desired, Actual;
+double DutyCycle;
+
 void setup() {
-  // put your setup code here, to run once:
-  TCCR0B = TCCR0B & B11111000 | B00000001;     // Prescale factor of 1 to get a Fpwm = 62.5kHz
+//  TCCR0B = TCCR0B & B11111000 | B00000001;     // Prescale factor of 1 to get a Fpwm = 62.5kHz
 
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-   analogWrite(ledPin, duty);
-     
+//   analogWrite(ledPin, duty); 
+
+  Desired = analogRead(pot);    //pot value between 0 and 1024
+  Actual = analogRead(feedback); //feedback from output voltage
+  Error = Desired - Actual;   //calculate the error
+
+  PTerm = Error * kp;   //multiply error by proportional term
+  
+  
+  
+
+
+
+
+
+
+
+
+
+
 }
