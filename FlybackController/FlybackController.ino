@@ -1,7 +1,7 @@
 // PID Loop Program
 
 
-//int ledPin = 6;
+//int ledPin = 7;
 int pot = A0;
 double kp = 1;
 double ki = 10;
