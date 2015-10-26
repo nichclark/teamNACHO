@@ -2,11 +2,12 @@
 
 // ------------------ Pin Set-Up ----------------------//
 int PWMOutput = 6;
+int VSupply = 8;
 int pot = A0;
 int feedback = A1;
 // ------------------ Declare Constant Variables ---------------------//
 int P, I, D, Duty;
-int Error, Last;
+int  Last, LastTime;
 int Desire, Actual;
 int MaxIntegral, Integral;
 long To, Tf;
@@ -15,7 +16,7 @@ int Scale = 0.25;
 int kP = 1;
 int kI = 0;
 int kD = 0;
-long dT = 200; //miliseconds
+int SampleTime = 200; //miliseconds
 
 void setup() {
   TCCR0B = TCCR0B & B11111000 | B00000001;     // Prescale factor of 1 to get a Fpwm = 62.5kHz
@@ -25,28 +26,54 @@ void setup() {
 }
 
 void loop() {
-  
-   Desire = analogRead(pot);
-   Actual = analogRead(feedback);
-   Error = Desire - Actual;
+  int Error = CalculateFlybackError();
+  int RunPID = ElapsedTime();
+  int Duty = PIDloop(Error, RunPID);
+  FlybackPWMSignal(Duty);
 
-  if (abs(Error) < MaxIntegral){ // prevent integral 'windup'
-    Integral = Integral + Error; // accumulate the error integral
+}
+int CalculateFlybackError(){
+  int Desire = analogRead(pot);
+  int Actual = analogRead(feedback);
+  int Error = Desire - Actual;
+  return Error;
+}
+int ElapsedTime(){
+  int RunPID;
+  int CurrentTime = millis()/64;
+  if(CurrentTime >= LastTime + SampleTime){
+    LastTime = CurrentTime;
+    RunPID = 1;
   }
   else {
-    Integral=0; // zero it if out of bounds
+    RunPID = 0;
   }
-  P = Error * kP; // calc proportional term
-  I = Integral * kI; // integral term
-  D = (Last - Actual) * kD; // derivative term
-  Duty = P + I + D; // Total  = P+I+D
-  Duty = Duty * Scale; // scale  to be in the range 0-255
-  
-  if (abs(Duty)>255) {
-    Duty = 255;
+  return RunPID;
+}
+void FlybackPWMSignal(int Duty){
+  analogWrite (PWMOutput,Duty);
+}
+int PIDloop(int Error, int Run) {
+  if (Run == 0 ){
+    return Duty;
   }
-  Last = Actual; // save current value for next time
-   
-   analogWrite (PWMOutput,Duty); // send PWM command
-
+  else {
+    if (abs(Error) < MaxIntegral){ // prevent integral 'windup'
+      Integral = Integral + Error; // accumulate the error integral
+    }
+    else {
+      Integral=0; // zero it if out of bounds
+    }
+    P = Error * kP; // calc proportional term
+    I = Integral * kI; // integral term
+    D = (Last - Actual) * kD; // derivative term
+    Duty = P + I + D; // Total  = P+I+D
+    Duty = Duty * Scale; // scale  to be in the range 0-255
+    
+    if (abs(Duty)>255) {
+      Duty = 255;
+    }
+    Last = Actual; // save current value for next time
+    return Duty;
+  }
 }
