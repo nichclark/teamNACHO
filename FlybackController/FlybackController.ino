@@ -3,14 +3,14 @@
 
 int PWMOutput = 6;
 int pot = A0;
-int kp = 1;
-int ki = 2;
+int kP = 1.75;
+int kI = 0.9;
 int PTerm, ITerm, SumTerm;
 int Error, NewError;
 int PrevError = 0;
 int Desired, Actual;
 int DutyCycle;
-long SampleTime = 200; //miliseconds
+long SampleTime = 10; //miliseconds
 long CurrentTime, LastTime;
 int feedback = A1;
 
@@ -31,8 +31,8 @@ void loop() {
     Actual = analogRead(feedback); //feedback from output voltage
     Error = Desired - Actual;   //calculate the error
   
-    PTerm = Error * kp;   //multiply error by proportional term
-    NewError = ki * Error;
+    PTerm = kP * Error;   //multiply error by proportional term
+    NewError = kI * Error;
     ITerm = NewError - PrevError;
     SumTerm = PTerm + ITerm;
     
@@ -41,10 +41,15 @@ void loop() {
     LastTime = CurrentTime;
     
     DutyCycle = map(SumTerm, 0, 1024, 0, 255);
+    if(DutyCycle > 255){
+      DutyCycle = 200;
+    }
+    if(DutyCycle < 0){
+      DutyCycle = 5;
+    }
     Serial.println(DutyCycle);
    // Serial.println(Error);
    // Serial.println(NewError);
-
   }
   
   analogWrite(PWMOutput, DutyCycle);
