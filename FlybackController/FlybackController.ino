@@ -5,11 +5,11 @@ int PWMOutput = 6;
 int pot = A0;
 int feedback = A1;
 /*-------------------------------------------*/
-int kP = 1.5;
-int kD = 0;
-int kI = 0;
+int kP = 1.9;
+int kD = .95;
+int kI = 0.25;
 int IntegralRange = 25;
-long SampleTime = 100; //miliseconds
+long SampleTime = 25; //miliseconds
 /*-------------------------------------------*/
 //int PTerm, ITerm, SumTerm;
 //int Error, NewError;
@@ -27,6 +27,7 @@ void setup() {
 void loop() {
   int DutyCycle;
   long LastTime;
+  
   
   long CurrentTime = millis()/64;
   
