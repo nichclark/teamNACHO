@@ -8,6 +8,7 @@ int feedback = A1;
 // A5 = CLC
 int ButtonUP = 8;
 int ButtonDOWN = 7;
+int x=0;
 
 /*-------------------------------------------*/
 int kP = 1.9;
@@ -41,27 +42,44 @@ void setup() {
 void loop() {
   int DutyCycle;
   long LastTime;
-  int x;
-  int buttonstate = LOW;
-  long lastDebounceTime = 0; //the last time the output pin was toggled
-  long debounceDelay = 50; // the debounce time; increase if output flickers
-  long CurrentTime = millis()/64;
+  int CurrentTime = millis()/64;
   
-  int buttonState1 = digitalRead(ButtonUP);
+  int lastState1 = LOW;   //previous current state
+  int lastState2 = LOW;
+
+//variables are longs since time is measured in milliseconds
+  long lastDebounceTime = 0;  //last time the output pin was toggled
+  long debounceDelay = 50;    //the debounce time; increase is output flickers
+
+  
+//Read state of each switch, store in variable.  
+  int buttonState1 = digitalRead(ButtonUP);  //reading
   int buttonState2 = digitalRead(ButtonDOWN);
 
-  if((CurrentTime - lastDebounceTime) > debounceDelay){
-    if(buttonState1 == HIGH){
-      x=x++;
-      Serial.println("BU");
-      lastDebounceTime = CurrentTime;
+  
+  
+  if (buttonState1 != lastState1){
+    lastDebounceTime = CurrentTime;
+  }
+  if (buttonState2 != lastState2){
+    lastDebounceTime = CurrentTime;
+  }
+
+  if ((CurrentTime - lastDebounceTime) > debounceDelay){
+    if (buttonState1 != lastState1) {
+      lastState1 = buttonState1; 
     }
-    if(buttonState2 == HIGH){
-      x=x--;
-      Serial.println("BD");
-      lastDebounceTime = CurrentTime;
+    if (buttonState2 != lastState2) {
+      lastState2 = buttonState2; 
     }
   }
+
+  if (buttonState1 == HIGH){
+    x=x+1;
+  }
+
+Serial.println(x);
+  
   // Testing the 7-seg display
   matrix.print(x,DEC);
   //matrix.writeDigitNum(1,2,true);
