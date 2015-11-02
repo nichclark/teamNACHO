@@ -4,6 +4,8 @@
 int PWMOutput = 6;
 int pot = A0;
 int feedback = A1;
+// A4 = DAT
+// A5 = CLC
 /*-------------------------------------------*/
 int kP = 1.9;
 int kD = .95;
@@ -16,17 +18,29 @@ long SampleTime = 25; //miliseconds
 //int PrevError = 0;
 //int Desired, Actual;
 
+#include <Wire.h>
+#include "Adafruit_LEDBackpack.h"
+#include "Adafruit_GFX.h"
+
+Adafruit_7segment matrix = Adafruit_7segment();
 
 
 void setup() {
   TCCR0B = TCCR0B & B11111000 | B00000001;     // Prescale factor of 1 to get a Fpwm = 62.5kHz
   Serial.begin(9600);
+  Serial.println("7 Segment Backpack Test");
+  matrix.begin(0x70);
   millis();
 }
 
 void loop() {
   int DutyCycle;
   long LastTime;
+  // Testing the 7-seg display
+  matrix.print(1235,DEC);
+  matrix.writeDigitNum(1,2,true);
+  matrix.blinkRate(0);
+  matrix.writeDisplay();
   
   
   long CurrentTime = millis()/64;
