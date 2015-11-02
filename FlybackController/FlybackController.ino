@@ -6,6 +6,9 @@ int pot = A0;
 int feedback = A1;
 // A4 = DAT
 // A5 = CLC
+int ButtonUP = 8;
+int ButtonDOWN = 7;
+
 /*-------------------------------------------*/
 int kP = 1.9;
 int kD = .95;
@@ -31,19 +34,41 @@ void setup() {
   Serial.println("7 Segment Backpack Test");
   matrix.begin(0x70);
   millis();
+  pinMode(ButtonUP, INPUT);
+  pinMode(ButtonDOWN, INPUT);
 }
-
+  
 void loop() {
   int DutyCycle;
   long LastTime;
+  int x;
+  int buttonstate = LOW;
+  long lastDebounceTime = 0; //the last time the output pin was toggled
+  long debounceDelay = 50; // the debounce time; increase if output flickers
+  long CurrentTime = millis()/64;
+  
+  int buttonState1 = digitalRead(ButtonUP);
+  int buttonState2 = digitalRead(ButtonDOWN);
+
+  if((CurrentTime - lastDebounceTime) > debounceDelay){
+    if(buttonState1 == HIGH){
+      x=x++;
+      Serial.println("BU");
+      lastDebounceTime = CurrentTime;
+    }
+    if(buttonState2 == HIGH){
+      x=x--;
+      Serial.println("BD");
+      lastDebounceTime = CurrentTime;
+    }
+  }
   // Testing the 7-seg display
-  matrix.print(1235,DEC);
-  matrix.writeDigitNum(1,2,true);
+  matrix.print(x,DEC);
+  //matrix.writeDigitNum(1,2,true);
   matrix.blinkRate(0);
   matrix.writeDisplay();
   
   
-  long CurrentTime = millis()/64;
   
   if(CurrentTime >= LastTime + SampleTime){
     DutyCycle = PIDcontroller();
@@ -79,7 +104,7 @@ int PIDcontroller(){
     Duty = 0;
   }
   Last = Actual;
-  Serial.println(Duty);
+ // Serial.println(Duty);
   return Duty;
 }
 
