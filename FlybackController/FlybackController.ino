@@ -77,7 +77,9 @@ void loop() {
   if (buttonState1 == HIGH){
     x=x+1;
   }
-
+  if (buttonState2 == HIGH){
+    x=x-1;
+  }
 Serial.println(x);
   
   // Testing the 7-seg display
