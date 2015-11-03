@@ -65,7 +65,7 @@ void displayValue (){
   state2 = digitalRead(ButtonDOWN);
 
   if(state1 != laststate1){
-    if(state1 == HIGH){
+    if(state1 == HIGH && state2 == LOW){
       x++;
       // Testing the 7-seg display
       matrix.print(x,DEC);
@@ -77,7 +77,7 @@ void displayValue (){
 laststate1 = state1;
 
   if(state2 != laststate2){
-      if(state2 == HIGH){
+      if(state2 == HIGH && state1 == LOW){
         x--;
         // Testing the 7-seg display
         matrix.print(x,DEC);
