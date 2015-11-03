@@ -9,6 +9,10 @@ int feedback = A1;
 int ButtonUP = 8;
 int ButtonDOWN = 7;
 int x=0;
+int state1 = 0;
+int state2 = 0;
+int laststate1 = 0;
+int laststate2 = 0;
 
 /*-------------------------------------------*/
 int kP = 1.9;
@@ -44,6 +48,48 @@ void loop() {
   long LastTime;
   int CurrentTime = millis()/64;
   
+  displayValue();
+  
+  if(CurrentTime >= LastTime + SampleTime){
+    DutyCycle = PIDcontroller();
+    LastTime = CurrentTime;
+  }
+  analogWrite(PWMOutput, DutyCycle);
+
+}
+
+
+void displayValue (){
+
+  state1 = digitalRead(ButtonUP);  //reading
+  state2 = digitalRead(ButtonDOWN);
+
+  if(state1 != laststate1){
+    if(state1 == HIGH){
+      x++;
+      // Testing the 7-seg display
+      matrix.print(x,DEC);
+      //matrix.writeDigitNum(1,2,true);
+      matrix.blinkRate(0);
+      matrix.writeDisplay();
+    }
+  }
+laststate1 = state1;
+
+  if(state2 != laststate2){
+      if(state2 == HIGH){
+        x--;
+        // Testing the 7-seg display
+        matrix.print(x,DEC);
+        //matrix.writeDigitNum(1,2,true);
+        matrix.blinkRate(0);
+        matrix.writeDisplay();
+      }
+    }
+  laststate2 = state2;
+  
+ /* int currentstate1;
+  int currentstate2;
   int lastState1 = LOW;   //previous current state
   int lastState2 = LOW;
 
@@ -53,49 +99,48 @@ void loop() {
 
   
 //Read state of each switch, store in variable.  
-  int buttonState1 = digitalRead(ButtonUP);  //reading
-  int buttonState2 = digitalRead(ButtonDOWN);
+  int reading1 = digitalRead(ButtonUP);  //reading
+  int reading2 = digitalRead(ButtonDOWN);
 
   
   
-  if (buttonState1 != lastState1){
-    lastDebounceTime = CurrentTime;
+if (reading1 != lastState1){
+    lastDebounceTime = millis();
   }
-  if (buttonState2 != lastState2){
-    lastDebounceTime = CurrentTime;
-  }
-
-  if ((CurrentTime - lastDebounceTime) > debounceDelay){
-    if (buttonState1 != lastState1) {
-      lastState1 = buttonState1; 
-    }
-    if (buttonState2 != lastState2) {
-      lastState2 = buttonState2; 
-    }
-  }
-
-  if (buttonState1 == HIGH){
-    x=x+1;
-  }
-  if (buttonState2 == HIGH){
-    x=x-1;
+if ((millis() - lastDebounceTime) > debounceDelay){
+    if (reading1 != currentstate1) {
+        currentstate1 = reading1; 
+      }
+      if(reading1 == HIGH){
+        x=x+1;
+      } 
   }
 Serial.println(x);
-  
+
+if (reading2 != lastState2){
+    lastDebounceTime = millis();
+  }
+if ((millis() - lastDebounceTime) > debounceDelay){
+    if (reading2 != currentstate2) {
+        currentstate2 = reading2; 
+      }
+      if(reading2 == HIGH){
+        x=x-1;
+      }
+  } 
   // Testing the 7-seg display
   matrix.print(x,DEC);
   //matrix.writeDigitNum(1,2,true);
   matrix.blinkRate(0);
   matrix.writeDisplay();
-  
-  
-  
-  if(CurrentTime >= LastTime + SampleTime){
-    DutyCycle = PIDcontroller();
-    LastTime = CurrentTime;
-  }
-  analogWrite(PWMOutput, DutyCycle);
 
+  */
+
+   // Testing the 7-seg display
+  //matrix.print(x,DEC);
+  //matrix.writeDigitNum(1,2,true);
+  //matrix.blinkRate(0);
+  //matrix.writeDisplay();
 }
 int PIDcontroller(){
   int Last;
