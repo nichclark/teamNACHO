@@ -6,14 +6,28 @@ int pot = A0;
 int feedback = A1;
 // A4 = DAT
 // A5 = CLC
-int ButtonUP = 8;
-int ButtonDOWN = 7;
-int x=0;
-int state1 = 0;
-int state2 = 0;
-int laststate1 = 0;
-int laststate2 = 0;
 
+//////////////////////////////////////////////////
+int button = 8;
+int button2 = 7;
+
+int x=0;
+
+int bounceTime = 50;
+int holdTime = 32000;
+
+int lastReading = LOW;
+int lastReading2 = LOW;
+
+int hold = 0;
+int hold2 = 0;
+
+int single = 0;
+int single2 = 0;
+
+long onTime = 0;
+long lastSwitchTime = 0;
+///////////////////////////////////////////////////
 /*-------------------------------------------*/
 int kP = 1.9;
 int kD = .95;
@@ -39,15 +53,15 @@ void setup() {
   Serial.println("7 Segment Backpack Test");
   matrix.begin(0x70);
   millis();
-  pinMode(ButtonUP, INPUT);
-  pinMode(ButtonDOWN, INPUT);
+  pinMode(button, INPUT);
+  pinMode(button2, INPUT);
 }
   
 void loop() {
   int DutyCycle;
   long LastTime;
   int CurrentTime = millis()/64;
-  
+
   displayValue();
   
   if(CurrentTime >= LastTime + SampleTime){
@@ -61,87 +75,84 @@ void loop() {
 
 void displayValue (){
 
-  state1 = digitalRead(ButtonUP);  //reading
-  state2 = digitalRead(ButtonDOWN);
-
-  if(state1 != laststate1){
-    if(state1 == HIGH && state2 == LOW){
-      x++;
-      // Testing the 7-seg display
-      matrix.print(x,DEC);
-      //matrix.writeDigitNum(1,2,true);
-      matrix.blinkRate(0);
-      matrix.writeDisplay();
-    }
-  }
-laststate1 = state1;
-
-  if(state2 != laststate2){
-      if(state2 == HIGH && state1 == LOW){
-        x--;
-        // Testing the 7-seg display
-        matrix.print(x,DEC);
-        //matrix.writeDigitNum(1,2,true);
-        matrix.blinkRate(0);
-        matrix.writeDisplay();
-      }
-    }
-  laststate2 = state2;
-  
- /* int currentstate1;
-  int currentstate2;
-  int lastState1 = LOW;   //previous current state
-  int lastState2 = LOW;
-
-//variables are longs since time is measured in milliseconds
-  long lastDebounceTime = 0;  //last time the output pin was toggled
-  long debounceDelay = 50;    //the debounce time; increase is output flickers
-
-  
-//Read state of each switch, store in variable.  
-  int reading1 = digitalRead(ButtonUP);  //reading
-  int reading2 = digitalRead(ButtonDOWN);
-
-  
-  
-if (reading1 != lastState1){
-    lastDebounceTime = millis();
-  }
-if ((millis() - lastDebounceTime) > debounceDelay){
-    if (reading1 != currentstate1) {
-        currentstate1 = reading1; 
-      }
-      if(reading1 == HIGH){
-        x=x+1;
-      } 
-  }
-Serial.println(x);
-
-if (reading2 != lastState2){
-    lastDebounceTime = millis();
-  }
-if ((millis() - lastDebounceTime) > debounceDelay){
-    if (reading2 != currentstate2) {
-        currentstate2 = reading2; 
-      }
-      if(reading2 == HIGH){
-        x=x-1;
-      }
-  } 
-  // Testing the 7-seg display
-  matrix.print(x,DEC);
-  //matrix.writeDigitNum(1,2,true);
-  matrix.blinkRate(0);
-  matrix.writeDisplay();
-
-  */
-
-   // Testing the 7-seg display
-  //matrix.print(x,DEC);
-  //matrix.writeDigitNum(1,2,true);
-  //matrix.blinkRate(0);
-  //matrix.writeDisplay();
+    int reading = digitalRead(button);
+    int reading2 = digitalRead(button2);
+    
+    //first pressed
+     if (reading == HIGH && lastReading == LOW && reading2 == LOW) {
+       onTime = millis();
+       Serial.println("press");
+       x++;
+       // Testing the 7-seg display
+            matrix.print(x,DEC);
+       //matrix.writeDigitNum(1,2,true);
+            matrix.blinkRate(0);
+            matrix.writeDisplay();
+     }
+    
+    //held
+     if (reading == HIGH && lastReading == HIGH && reading2 == LOW) {
+       if ((millis() - onTime) > holdTime) {
+         Serial.println("holding");
+         x++; 
+       // Testing the 7-seg display
+            matrix.print(x,DEC);
+       //matrix.writeDigitNum(1,2,true);
+            matrix.blinkRate(0);
+            matrix.writeDisplay();
+         hold = 1;
+       }
+     }
+    
+    //released
+     if (reading == LOW && lastReading == HIGH) {
+       if (hold == 1) {
+         Serial.println("let go");
+         hold = 0;
+       }   
+     }
+     
+     lastReading = reading;
+    
+    //DECREMENT SETUP
+    
+    
+    //first pressed
+     if (reading2 == HIGH && lastReading2 == LOW && reading == LOW) {
+       onTime = millis();
+       Serial.println("press");
+       x--;
+       // Testing the 7-seg display
+            matrix.print(x,DEC);
+       //matrix.writeDigitNum(1,2,true);
+            matrix.blinkRate(0);
+            matrix.writeDisplay();
+     }
+    
+    //held
+     if (reading2 == HIGH && lastReading2 == HIGH && reading == LOW) {
+       if ((millis() - onTime) > holdTime) {
+         Serial.println("holding");
+         x--; 
+       // Testing the 7-seg display
+            matrix.print(x,DEC);
+       //matrix.writeDigitNum(1,2,true);
+            matrix.blinkRate(0);
+            matrix.writeDisplay();
+         hold2 = 1;
+       }
+     }
+    
+    //released
+     if (reading2 == LOW && lastReading2 == HIGH) {
+       if (hold2 == 1) {
+         Serial.println("let go");
+         hold2 = 0;
+       }   
+     }
+     lastReading2 = reading2;
 }
+
 int PIDcontroller(){
   int Last;
   int Integral;
