@@ -9955,10 +9955,10 @@ Based on  the following source:
 <part name="D2" library="diode" deviceset="1N4004" device=""/>
 <part name="C6" library="rcl" deviceset="C-US" device="C0805" value="10u"/>
 <part name="R3" library="rcl" deviceset="R-US_" device="M0805" value="12"/>
+<part name="SUPPLY9" library="supply2" deviceset="GND" device=""/>
 <part name="X1" library="con-berg" deviceset="PN87520" device=""/>
 <part name="P+6" library="supply1" deviceset="+5V" device=""/>
 <part name="SUPPLY8" library="supply2" deviceset="GND" device=""/>
-<part name="SUPPLY9" library="supply2" deviceset="GND" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -9993,10 +9993,10 @@ Based on  the following source:
 <instance part="D2" gate="1" x="110.49" y="-16.51"/>
 <instance part="C6" gate="G$1" x="127" y="-19.05"/>
 <instance part="R3" gate="G$1" x="163.83" y="-16.51"/>
-<instance part="X1" gate="G$1" x="-12.7" y="76.2" rot="R180"/>
-<instance part="P+6" gate="1" x="-2.54" y="76.2"/>
-<instance part="SUPPLY8" gate="GND" x="3.81" y="76.2"/>
 <instance part="SUPPLY9" gate="GND" x="63.5" y="-50.8"/>
+<instance part="X1" gate="G$1" x="-5.08" y="68.58" rot="R180"/>
+<instance part="P+6" gate="1" x="5.08" y="76.2"/>
+<instance part="SUPPLY8" gate="GND" x="5.08" y="60.96"/>
 </instances>
 <busses>
 </busses>
@@ -10039,14 +10039,14 @@ Based on  the following source:
 <pinref part="SUPPLY7" gate="GND" pin="GND"/>
 </segment>
 <segment>
-<pinref part="X1" gate="G$1" pin="4"/>
-<wire x1="-10.16" y1="78.74" x2="3.81" y2="78.74" width="0.1524" layer="91"/>
-<pinref part="SUPPLY8" gate="GND" pin="GND"/>
-</segment>
-<segment>
 <pinref part="Q2" gate="G$1" pin="S"/>
 <wire x1="63.5" y1="-45.72" x2="63.5" y2="-48.26" width="0.1524" layer="91"/>
 <pinref part="SUPPLY9" gate="GND" pin="GND"/>
+</segment>
+<segment>
+<pinref part="X1" gate="G$1" pin="1"/>
+<wire x1="-2.54" y1="63.5" x2="5.08" y2="63.5" width="0.1524" layer="91"/>
+<pinref part="SUPPLY8" gate="GND" pin="GND"/>
 </segment>
 </net>
 <net name="N$2" class="0">
@@ -10119,10 +10119,10 @@ Based on  the following source:
 <junction x="45.72" y="-16.51"/>
 </segment>
 <segment>
-<pinref part="X1" gate="G$1" pin="1"/>
-<wire x1="-10.16" y1="71.12" x2="-2.54" y2="71.12" width="0.1524" layer="91"/>
+<pinref part="X1" gate="G$1" pin="4"/>
+<wire x1="-2.54" y1="71.12" x2="5.08" y2="71.12" width="0.1524" layer="91"/>
+<wire x1="5.08" y1="71.12" x2="5.08" y2="73.66" width="0.1524" layer="91"/>
 <pinref part="P+6" gate="1" pin="+5V"/>
-<wire x1="-2.54" y1="71.12" x2="-2.54" y2="73.66" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="SCK" class="0">
