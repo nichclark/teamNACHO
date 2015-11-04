@@ -11,7 +11,7 @@ int feedback = A1;
 int button = 8;
 int button2 = 7;
 
-int x=0;
+int x;
 
 int bounceTime = 50;
 int holdTime = 32000;
@@ -62,7 +62,8 @@ void loop() {
   long LastTime;
   int CurrentTime = millis()/64;
 
-  displayValue();
+  int num = WhatTheNumber();
+  displayValue(num);
   
   if(CurrentTime >= LastTime + SampleTime){
     DutyCycle = PIDcontroller();
@@ -70,87 +71,82 @@ void loop() {
   }
   analogWrite(PWMOutput, DutyCycle);
 
+
+}
+void displayValue (int value){
+  matrix.print(value,DEC);
+  //matrix.writeDigitNum(1,true);
+  matrix.blinkRate(0);
+  matrix.drawColon(true);
+  matrix.writeDisplay();
 }
 
-
-void displayValue (){
-
-    int reading = digitalRead(button);
-    int reading2 = digitalRead(button2);
-    
-    //first pressed
-     if (reading == HIGH && lastReading == LOW && reading2 == LOW) {
-       onTime = millis();
-       Serial.println("press");
-       x++;
-       // Testing the 7-seg display
-            matrix.print(x,DEC);
-       //matrix.writeDigitNum(1,2,true);
-            matrix.blinkRate(0);
-            matrix.writeDisplay();
+int WhatTheNumber (){
+  int maxValue = 1250;
+  int minValue = 50;
+  int reading = digitalRead(button);
+  int reading2 = digitalRead(button2);
+  
+  //first pressed
+   if (reading == HIGH && lastReading == LOW && reading2 == LOW) {
+     onTime = millis();
+     Serial.println("press");
+     x=x+10;
+   }
+  
+  //held
+   if (reading == HIGH && lastReading == HIGH && reading2 == LOW) {
+     if ((millis() - onTime) > holdTime) {
+       Serial.println("holding");
+       x=x+10; 
+       hold = 1;
      }
-    
-    //held
-     if (reading == HIGH && lastReading == HIGH && reading2 == LOW) {
-       if ((millis() - onTime) > holdTime) {
-         Serial.println("holding");
-         x++; 
-       // Testing the 7-seg display
-            matrix.print(x,DEC);
-       //matrix.writeDigitNum(1,2,true);
-            matrix.blinkRate(0);
-            matrix.writeDisplay();
-         hold = 1;
-       }
+   }
+  
+  //released
+   if (reading == LOW && lastReading == HIGH) {
+     if (hold == 1) {
+       Serial.println("let go");
+       hold = 0;
+     }   
+   }
+   
+   lastReading = reading;
+  
+  //DECREMENT SETUP
+  
+  
+  //first pressed
+   if (reading2 == HIGH && lastReading2 == LOW && reading == LOW) {
+     onTime = millis();
+     Serial.println("press");
+     x=x-10;
+   }
+  
+  //held
+   if (reading2 == HIGH && lastReading2 == HIGH && reading == LOW) {
+     if ((millis() - onTime) > holdTime) {
+       Serial.println("holding");
+        x=x-10; 
+       hold2 = 1;
      }
-    
-    //released
-     if (reading == LOW && lastReading == HIGH) {
-       if (hold == 1) {
-         Serial.println("let go");
-         hold = 0;
-       }   
-     }
-     
-     lastReading = reading;
-    
-    //DECREMENT SETUP
-    
-    
-    //first pressed
-     if (reading2 == HIGH && lastReading2 == LOW && reading == LOW) {
-       onTime = millis();
-       Serial.println("press");
-       x--;
-       // Testing the 7-seg display
-            matrix.print(x,DEC);
-       //matrix.writeDigitNum(1,2,true);
-            matrix.blinkRate(0);
-            matrix.writeDisplay();
-     }
-    
-    //held
-     if (reading2 == HIGH && lastReading2 == HIGH && reading == LOW) {
-       if ((millis() - onTime) > holdTime) {
-         Serial.println("holding");
-         x--; 
-       // Testing the 7-seg display
-            matrix.print(x,DEC);
-       //matrix.writeDigitNum(1,2,true);
-            matrix.blinkRate(0);
-            matrix.writeDisplay();
-         hold2 = 1;
-       }
-     }
-    
-    //released
-     if (reading2 == LOW && lastReading2 == HIGH) {
-       if (hold2 == 1) {
-         Serial.println("let go");
-         hold2 = 0;
-       }   
-     }
-     lastReading2 = reading2;
+   }
+  
+  //released
+   if (reading2 == LOW && lastReading2 == HIGH) {
+     if (hold2 == 1) {
+       Serial.println("let go");
+       hold2 = 0;
+     }   
+   }
+   if(x > maxValue){
+    x = maxValue;
+   }
+   if(x < minValue){
+    x = minValue;
+   }
+   lastReading2 = reading2;
+   return x;
 }
 
 int PIDcontroller(){
