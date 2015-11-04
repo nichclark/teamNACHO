@@ -50,7 +50,7 @@ Adafruit_7segment matrix = Adafruit_7segment();
 void setup() {
   TCCR0B = TCCR0B & B11111000 | B00000001;     // Prescale factor of 1 to get a Fpwm = 62.5kHz
   Serial.begin(9600);
-  Serial.println("7 Segment Backpack Test");
+  //Serial.println("7 Segment Backpack Test");
   matrix.begin(0x70);
   millis();
   pinMode(button, INPUT);
@@ -62,11 +62,13 @@ void loop() {
   long LastTime;
   int CurrentTime = millis()/64;
 
-  int num = WhatTheNumber();
+  int num = WhatTheNumber();  //num is in "centi"volts
   displayValue(num);
+  float val = (((num/100)/3)*1023)/5; //Convert num to 1024
+  Serial.println(val);
   
   if(CurrentTime >= LastTime + SampleTime){
-    DutyCycle = PIDcontroller();
+    DutyCycle = PIDcontroller(val);
     LastTime = CurrentTime;
   }
   analogWrite(PWMOutput, DutyCycle);
@@ -149,10 +151,11 @@ int WhatTheNumber (){
    return x;
 }
 
-int PIDcontroller(){
+int PIDcontroller(int val){
   int Last;
   int Integral;
-  int Desired = analogRead(pot);    //pot value between 0 and 1024
+  int Desired = val;
+  //int Desired = analogRead(pot);    //pot value between 0 and 1024
   int Actual = analogRead(feedback); //feedback from output voltage
   int Error = Desired - Actual;   //calculate the error
   
@@ -176,7 +179,8 @@ int PIDcontroller(){
     Duty = 0;
   }
   Last = Actual;
- // Serial.println(Duty);
+ //Serial.println(Duty);
+
   return Duty;
 }
 
