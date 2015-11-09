@@ -1,9 +1,12 @@
 // PID Loop Program
 
 
-int PWMOutput = 6;
-int pot = A0;
-int feedback = A1;
+#define PWMOutput = 6;
+#define pot = A0;
+#define feedback = A1;
+
+#define READ_PIN 13
+
 // A4 = DAT
 // A5 = CLC
 
@@ -55,6 +58,7 @@ void setup() {
   millis();
   pinMode(button, INPUT);
   pinMode(button2, INPUT);
+  pinMode(READ_PIN,INPUT);
 }
   
 void loop() {
@@ -184,3 +188,39 @@ int PIDcontroller(int val){
   return Duty;
 }
 
+
+void calcfeedback(){
+
+  //Reads a PWM signal's duty cycle and frequency.
+
+  
+  
+  static double duty;
+  static long highTime = 0;
+  static long lowTime = 0;
+  static long tempPulse;
+  
+  
+  void loop(){
+  readPWM(READ_PIN);
+  Serial.println(duty);
+  }
+  
+  //Takes in reading pins and outputs pwm duty cycle.
+  void readPWM(int readPin){
+  highTime = 0;
+  lowTime = 0;
+  
+  tempPulse = pulseIn(readPin,HIGH);
+  if(tempPulse>highTime){
+  highTime = tempPulse;
+  }
+  
+  tempPulse = pulseIn(readPin,LOW);
+  if(tempPulse>lowTime){
+  lowTime = tempPulse;
+  }
+  
+  duty = (100*(highTime/(double (lowTime+highTime))));
+  }
+}
