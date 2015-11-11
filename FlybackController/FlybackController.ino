@@ -4,11 +4,13 @@
 #include "Adafruit_LEDBackpack.h"
 #include "Adafruit_GFX.h"
 
-#define PWMOutput 6;
-#define button 8;
-#define button2 7;
-#define feedback 13;
-#define constFive 5;
+#define constFive 5
+#define PWMOutput 6
+#define button2 7
+#define button 8
+
+#define feedback 13
+
 
 // A4 = DAT
 // A5 = CLC
@@ -53,6 +55,7 @@ void setup() {
   pinMode(button, INPUT);
   pinMode(button2, INPUT);
   pinMode(feedback, INPUT);
+  //pinMode(0, INPUT);
 }
   
 void loop() {
@@ -60,18 +63,21 @@ void loop() {
   long LastTime;
   int CurrentTime = millis()/64;
 
-  int num = WhatTheNumber();  //num is in "centi"volts
-  displayValue(num);
-  double Desired = (((num/100)/3)*1023)/5; //Convert num to 1024
+  //int num = WhatTheNumber();  //num is in "centi"volts
+  //displayValue(num);
+  //double Desired = (((num/100)/3)*1023)/5; //Convert num to 1024
+  int Desired = analogRead(0);
   double Actual = calcFeedback();
-  Serial.println(Desired);
+  //Serial.println(feedback);
+  Serial.println(analogRead(0));
+  
   
   if(CurrentTime >= LastTime + SampleTime){
     DutyCycle = PIDcontroller(Desired,Actual);
     LastTime = CurrentTime;
   }
   analogWrite(PWMOutput, DutyCycle);
-  analogWrite(constFive, (255/2));
+  //analogWrite(constFive, (165));
 
 
 }
@@ -160,11 +166,11 @@ int calcFeedback(){
   static long lowTime = 0;
   static long tempPulse;
   
-  tempPulse = pulseIn(readPin,HIGH);
+  tempPulse = pulseIn(feedback,HIGH);
   if(tempPulse>highTime){
     highTime = tempPulse;
   }
-  tempPulse = pulseIn(readPin,LOW);
+  tempPulse = pulseIn(feedback,LOW);
   if(tempPulse>lowTime){
     lowTime = tempPulse;
   }
@@ -193,7 +199,7 @@ int PIDcontroller(double Desired, double Actual){
   double D = (Last - Actual) * kD;
   double Duty = P + I + D;
  
-  double Duty = map(Duty, 0, 1024, 0, 255);
+  Duty = map(Duty, 0, 1024, 0, 255);
   if(Duty > 255){
     Duty = 255;
   }
