@@ -1,18 +1,20 @@
 // PID Loop Program
 
+#include <Wire.h>
+#include "Adafruit_LEDBackpack.h"
+#include "Adafruit_GFX.h"
 
-#define PWMOutput = 6;
-#define pot = A0;
-#define feedback = A1;
-
-#define READ_PIN 13
+#define PWMOutput 6;
+#define button 8;
+#define button2 7;
+#define feedback 13;
+#define constFive 5;
 
 // A4 = DAT
 // A5 = CLC
 
+Adafruit_7segment matrix = Adafruit_7segment();
 //////////////////////////////////////////////////
-int button = 8;
-int button2 = 7;
 
 int x;
 
@@ -38,44 +40,38 @@ int kI = 0.25;
 int IntegralRange = 25;
 long SampleTime = 25; //miliseconds
 /*-------------------------------------------*/
-//int PTerm, ITerm, SumTerm;
-//int Error, NewError;
-//int PrevError = 0;
-//int Desired, Actual;
 
-#include <Wire.h>
-#include "Adafruit_LEDBackpack.h"
-#include "Adafruit_GFX.h"
 
-Adafruit_7segment matrix = Adafruit_7segment();
+
 
 
 void setup() {
   TCCR0B = TCCR0B & B11111000 | B00000001;     // Prescale factor of 1 to get a Fpwm = 62.5kHz
   Serial.begin(9600);
-  //Serial.println("7 Segment Backpack Test");
   matrix.begin(0x70);
   millis();
   pinMode(button, INPUT);
   pinMode(button2, INPUT);
-  pinMode(READ_PIN,INPUT);
+  pinMode(feedback, INPUT);
 }
   
 void loop() {
-  int DutyCycle;
+  double DutyCycle;
   long LastTime;
   int CurrentTime = millis()/64;
 
   int num = WhatTheNumber();  //num is in "centi"volts
   displayValue(num);
-  float val = (((num/100)/3)*1023)/5; //Convert num to 1024
-  Serial.println(val);
+  double Desired = (((num/100)/3)*1023)/5; //Convert num to 1024
+  double Actual = calcFeedback();
+  Serial.println(Desired);
   
   if(CurrentTime >= LastTime + SampleTime){
-    DutyCycle = PIDcontroller(val);
+    DutyCycle = PIDcontroller(Desired,Actual);
     LastTime = CurrentTime;
   }
   analogWrite(PWMOutput, DutyCycle);
+  analogWrite(constFive, (255/2));
 
 
 }
@@ -155,13 +151,35 @@ int WhatTheNumber (){
    return x;
 }
 
-int PIDcontroller(int val){
-  int Last;
-  int Integral;
-  int Desired = val;
-  //int Desired = analogRead(pot);    //pot value between 0 and 1024
-  int Actual = analogRead(feedback); //feedback from output voltage
-  int Error = Desired - Actual;   //calculate the error
+int calcFeedback(){
+
+  //Reads a PWM signal's duty cycle and frequency.
+  static double duty;
+  static double Vfb;
+  static long highTime = 0;
+  static long lowTime = 0;
+  static long tempPulse;
+  
+  tempPulse = pulseIn(readPin,HIGH);
+  if(tempPulse>highTime){
+    highTime = tempPulse;
+  }
+  tempPulse = pulseIn(readPin,LOW);
+  if(tempPulse>lowTime){
+    lowTime = tempPulse;
+  }
+  duty = highTime/(double (lowTime+highTime));
+
+  Vfb = 255*duty;
+  Vfb = map(Vfb, 0, 255, 0, 1024);
+  
+  return Vfb;
+}
+
+int PIDcontroller(double Desired, double Actual){
+  double Last;
+  double Integral;
+  double Error = Desired - Actual;   //calculate the error
   
   if(abs(Error) < IntegralRange){
     Integral = Integral + Error;
@@ -170,12 +188,12 @@ int PIDcontroller(int val){
     Integral = 0;
   }
   
-  int P = Error * kP;   //multiply error by proportional term
-  int I = Integral * kI;
-  int D = (Last - Actual) * kD;
-  int Sum = P + I + D;
+  double P = Error * kP;   //multiply error by proportional term
+  double I = Integral * kI;
+  double D = (Last - Actual) * kD;
+  double Duty = P + I + D;
  
-  int Duty = map(Sum, 0, 1024, 0, 255);
+  double Duty = map(Duty, 0, 1024, 0, 255);
   if(Duty > 255){
     Duty = 255;
   }
@@ -189,38 +207,3 @@ int PIDcontroller(int val){
 }
 
 
-void calcfeedback(){
-
-  //Reads a PWM signal's duty cycle and frequency.
-
-  
-  
-  static double duty;
-  static long highTime = 0;
-  static long lowTime = 0;
-  static long tempPulse;
-  
-  
-  void loop(){
-  readPWM(READ_PIN);
-  Serial.println(duty);
-  }
-  
-  //Takes in reading pins and outputs pwm duty cycle.
-  void readPWM(int readPin){
-  highTime = 0;
-  lowTime = 0;
-  
-  tempPulse = pulseIn(readPin,HIGH);
-  if(tempPulse>highTime){
-  highTime = tempPulse;
-  }
-  
-  tempPulse = pulseIn(readPin,LOW);
-  if(tempPulse>lowTime){
-  lowTime = tempPulse;
-  }
-  
-  duty = (100*(highTime/(double (lowTime+highTime))));
-  }
-}
