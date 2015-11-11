@@ -4,6 +4,7 @@
 #include "Adafruit_LEDBackpack.h"
 #include "Adafruit_GFX.h"
 
+<<<<<<< HEAD
 #define constFive 5
 #define PWMOutput 6
 #define button2 7
@@ -12,6 +13,11 @@
 #define feedback 13
 
 
+=======
+int PWMOutput = 6;
+int pot = A0;
+int feedback = A1;
+>>>>>>> parent of c803317... added reading PWM duty cycle
 // A4 = DAT
 // A5 = CLC
 
@@ -54,8 +60,11 @@ void setup() {
   millis();
   pinMode(button, INPUT);
   pinMode(button2, INPUT);
+<<<<<<< HEAD
   pinMode(feedback, INPUT);
   //pinMode(0, INPUT);
+=======
+>>>>>>> parent of c803317... added reading PWM duty cycle
 }
   
 void loop() {
@@ -212,4 +221,7 @@ int PIDcontroller(double Desired, double Actual){
   return Duty;
 }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> parent of c803317... added reading PWM duty cycle
