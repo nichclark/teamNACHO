@@ -3501,6 +3501,11 @@ design rules under a new name.</description>
 <contactref element="R6" pad="2"/>
 <wire x1="-36.83" y1="-53.34" x2="-34.61" y2="-58.42" width="0" layer="19" extent="1-1"/>
 </signal>
+<signal name="N$19">
+<contactref element="OK1" pad="5"/>
+<contactref element="LED1" pad="K"/>
+<wire x1="-19.05" y1="-38.1" x2="-34.29" y2="-53.34" width="0" layer="19" extent="1-1"/>
+</signal>
 <signal name="N$20">
 <contactref element="OK1" pad="1"/>
 <contactref element="R7" pad="2"/>
@@ -3621,13 +3626,6 @@ design rules under a new name.</description>
 <contactref element="R11" pad="2"/>
 <wire x1="-21.59" y1="-134.62" x2="-34.61" y2="-154.94" width="0" layer="19" extent="1-1"/>
 <wire x1="34.7726" y1="41.51" x2="-21.59" y2="-134.62" width="0" layer="19" extent="1-1"/>
-</signal>
-<signal name="OPTO">
-<contactref element="U$1" pad="13"/>
-<contactref element="OK1" pad="5"/>
-<contactref element="LED1" pad="K"/>
-<wire x1="-19.05" y1="-38.1" x2="-34.29" y2="-53.34" width="0" layer="19" extent="1-1"/>
-<wire x1="34.7726" y1="42.31" x2="-19.05" y2="-38.1" width="0" layer="19" extent="1-1"/>
 </signal>
 </signals>
 </board>

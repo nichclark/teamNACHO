@@ -17,3 +17,4 @@ void loop() {
   int duty = value/4;
   analogWrite(Out,duty);
 }
+

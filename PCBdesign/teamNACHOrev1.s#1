@@ -13208,6 +13208,15 @@ Source: www.e-switch.com .. 5500.pdf</description>
 <pinref part="R6" gate="G$1" pin="2"/>
 </segment>
 </net>
+<net name="N$19" class="0">
+<segment>
+<pinref part="OK1" gate="G$1" pin="COL"/>
+<pinref part="LED1" gate="G$1" pin="C"/>
+<wire x1="161.29" y1="35.56" x2="157.48" y2="35.56" width="0.1524" layer="91"/>
+<junction x="157.48" y="35.56"/>
+<wire x1="157.48" y1="35.56" x2="144.78" y2="35.56" width="0.1524" layer="91"/>
+</segment>
+</net>
 <net name="N$20" class="0">
 <segment>
 <pinref part="OK1" gate="G$1" pin="A"/>
@@ -13458,21 +13467,6 @@ Source: www.e-switch.com .. 5500.pdf</description>
 <wire x1="161.29" y1="58.42" x2="168.91" y2="58.42" width="0.1524" layer="91"/>
 <pinref part="R11" gate="G$1" pin="2"/>
 <label x="162.56" y="58.42" size="1.778" layer="95"/>
-</segment>
-</net>
-<net name="OPTO" class="0">
-<segment>
-<pinref part="U$1" gate="G$1" pin="PB1"/>
-<wire x1="87.63" y1="19.05" x2="87.63" y2="8.89" width="0.1524" layer="91"/>
-<label x="87.63" y="8.89" size="1.778" layer="95" rot="R90"/>
-</segment>
-<segment>
-<pinref part="OK1" gate="G$1" pin="COL"/>
-<pinref part="LED1" gate="G$1" pin="C"/>
-<wire x1="161.29" y1="35.56" x2="157.48" y2="35.56" width="0.1524" layer="91"/>
-<junction x="157.48" y="35.56"/>
-<wire x1="157.48" y1="35.56" x2="144.78" y2="35.56" width="0.1524" layer="91"/>
-<label x="146.05" y="35.56" size="1.778" layer="95"/>
 </segment>
 </net>
 </nets>
