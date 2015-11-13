@@ -3373,12 +3373,18 @@ design rules under a new name.</description>
 <element name="R11" library="rcl" package="R0805" value="1k" x="66.675" y="72.39" smashed="yes" rot="MR180">
 <attribute name="NAME" x="66.04" y="71.12" size="1.27" layer="26" rot="MR180"/>
 </element>
-<element name="C11" library="rcl" package="C0805" value="10u" x="13.97" y="10.16" smashed="yes" rot="MR270">
-<attribute name="NAME" x="12.7" y="11.43" size="1.27" layer="26" rot="MR270"/>
+<element name="C11" library="rcl" package="C0805" value="10u" x="15.24" y="13.335" smashed="yes" rot="MR270">
+<attribute name="NAME" x="13.97" y="14.605" size="1.27" layer="26" rot="MR270"/>
 </element>
-<element name="C12" library="rcl" package="C0805" value="0.1u" x="18.415" y="10.16" smashed="yes" rot="MR270">
-<attribute name="NAME" x="17.145" y="11.43" size="1.27" layer="26" rot="MR270"/>
+<element name="C12" library="rcl" package="C0805" value="0.1u" x="20.32" y="13.335" smashed="yes" rot="MR270">
+<attribute name="NAME" x="19.05" y="14.605" size="1.27" layer="26" rot="MR270"/>
 </element>
+<element name="LED2" library="eagle-ltspice" package="LED_LD260" value="" x="5.715" y="18.415" rot="R270">
+<attribute name="SPICETYPE" value="diode" x="12.065" y="18.415" size="1.778" layer="27" rot="R270" display="off"/>
+<attribute name="SPICEMODEL" value="NONE" x="12.065" y="18.415" size="1.778" layer="27" rot="R270" display="off"/>
+<attribute name="SPICEPREFIX" value="D" x="12.065" y="18.415" size="1.778" layer="27" rot="R270" display="off"/>
+</element>
+<element name="R12" library="rcl" package="M0805" value="470" x="3.175" y="21.59" rot="MR180"/>
 </elements>
 <signals>
 <signal name="GND">
@@ -3413,8 +3419,7 @@ design rules under a new name.</description>
 </polygon>
 <contactref element="C11" pad="2"/>
 <contactref element="C12" pad="2"/>
-<wire x1="13.97" y1="9.21" x2="18.415" y2="9.21" width="0" layer="19" extent="1-1"/>
-<wire x1="26.67" y1="2.54" x2="13.97" y2="9.21" width="0" layer="19" extent="1-1"/>
+<contactref element="LED2" pad="K"/>
 </signal>
 <signal name="N$2">
 <contactref element="U$1" pad="7"/>
@@ -3462,9 +3467,9 @@ design rules under a new name.</description>
 <wire x1="43.815" y1="38.735" x2="40.32" y2="52.07" width="0" layer="19" extent="16-16"/>
 <wire x1="33.02" y1="17.78" x2="43.815" y2="38.735" width="0" layer="19" extent="1-1"/>
 <wire x1="26.67" y1="17.78" x2="33.02" y2="17.78" width="0" layer="19" extent="1-1"/>
-<wire x1="9.4488" y1="14.3764" x2="26.67" y2="17.78" width="0" layer="19" extent="1-1"/>
-<wire x1="13.97" y1="11.11" x2="9.4488" y2="14.3764" width="0" layer="19" extent="1-1"/>
-<wire x1="18.415" y1="11.11" x2="13.97" y2="11.11" width="0" layer="19" extent="1-1"/>
+<wire x1="20.32" y1="14.285" x2="26.67" y2="17.78" width="0" layer="19" extent="16-16"/>
+<wire x1="15.24" y1="14.285" x2="20.32" y2="14.285" width="0" layer="19" extent="16-16"/>
+<wire x1="9.4488" y1="14.3764" x2="15.24" y2="14.285" width="0" layer="19" extent="16-16"/>
 <wire x1="63.5" y1="10.16" x2="33.02" y2="17.78" width="0" layer="19" extent="1-1"/>
 </signal>
 <signal name="SCK">
@@ -3632,12 +3637,14 @@ design rules under a new name.</description>
 <contactref element="U$5" pad="P1"/>
 <contactref element="R4" pad="2"/>
 <contactref element="C7" pad="1"/>
+<contactref element="R12" pad="1"/>
 <wire x1="11.43" y1="54.29" x2="16.51" y2="54.29" width="0" layer="19" extent="16-16"/>
 <wire x1="6.35" y1="54.61" x2="11.43" y2="54.29" width="0" layer="19" extent="16-16"/>
 <wire x1="16.51" y1="37.15" x2="16.51" y2="54.29" width="0" layer="19" extent="16-16"/>
 <wire x1="11.43" y1="37.15" x2="16.51" y2="37.15" width="0" layer="19" extent="16-16"/>
 <wire x1="6.3246" y1="27.4066" x2="11.43" y2="37.15" width="0" layer="19" extent="16-16"/>
-<wire x1="2.4384" y1="14.3764" x2="6.3246" y2="27.4066" width="0" layer="19" extent="1-1"/>
+<wire x1="2.225" y1="21.59" x2="6.3246" y2="27.4066" width="0" layer="19" extent="16-16"/>
+<wire x1="2.4384" y1="14.3764" x2="2.225" y2="21.59" width="0" layer="19" extent="16-16"/>
 </signal>
 <signal name="GND_S">
 <contactref element="C6" pad="2"/>
@@ -3698,6 +3705,11 @@ design rules under a new name.</description>
 <contactref element="U2" pad="2"/>
 <contactref element="JP2" pad="3"/>
 <wire x1="38.735" y1="30.48" x2="47.0916" y2="29.845" width="0" layer="19" extent="1-1"/>
+</signal>
+<signal name="N$9">
+<contactref element="LED2" pad="A"/>
+<contactref element="R12" pad="2"/>
+<wire x1="4.125" y1="21.59" x2="5.715" y2="19.685" width="0" layer="19" extent="16-16"/>
 </signal>
 </signals>
 </board>

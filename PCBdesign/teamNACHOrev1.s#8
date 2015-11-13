@@ -12789,7 +12789,7 @@ Source: www.e-switch.com .. 5500.pdf</description>
 <instance part="SUPPLY8" gate="GND" x="5.08" y="60.96"/>
 <instance part="U$3" gate="G$1" x="147.32" y="-16.51"/>
 <instance part="X2" gate="-1" x="194.31" y="-16.51"/>
-<instance part="X2" gate="-2" x="194.31" y="-24.13"/>
+<instance part="X2" gate="-2" x="194.31" y="-22.86"/>
 <instance part="X3" gate="-1" x="194.31" y="6.35"/>
 <instance part="X3" gate="-2" x="194.31" y="-1.27"/>
 <instance part="X3" gate="-3" x="194.31" y="-8.89"/>
@@ -13106,22 +13106,10 @@ Source: www.e-switch.com .. 5500.pdf</description>
 <pinref part="U$3" gate="G$1" pin="VOUT"/>
 </segment>
 </net>
-<net name="N$9" class="0">
-<segment>
-<pinref part="R3" gate="G$1" pin="2"/>
-<wire x1="177.8" y1="-16.51" x2="181.61" y2="-16.51" width="0.1524" layer="91"/>
-<wire x1="181.61" y1="-16.51" x2="181.61" y2="-24.13" width="0.1524" layer="91"/>
-<wire x1="181.61" y1="-24.13" x2="148.59" y2="-24.13" width="0.1524" layer="91"/>
-<pinref part="X2" gate="-1" pin="K"/>
-<wire x1="181.61" y1="-16.51" x2="191.77" y2="-16.51" width="0.1524" layer="91"/>
-<junction x="181.61" y="-16.51"/>
-<pinref part="U$3" gate="G$1" pin="ADJ"/>
-</segment>
-</net>
 <net name="N$11" class="0">
 <segment>
 <pinref part="X2" gate="-2" pin="K"/>
-<wire x1="191.77" y1="-24.13" x2="191.77" y2="-26.67" width="0.1524" layer="91"/>
+<wire x1="191.77" y1="-22.86" x2="191.77" y2="-26.67" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$13" class="0">
@@ -13197,6 +13185,17 @@ Source: www.e-switch.com .. 5500.pdf</description>
 <pinref part="R8" gate="G$1" pin="2"/>
 <wire x1="135.89" y1="-35.56" x2="128.27" y2="-35.56" width="0.1524" layer="91"/>
 <label x="130.81" y="-35.56" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="R3" gate="G$1" pin="2"/>
+<wire x1="177.8" y1="-16.51" x2="181.61" y2="-16.51" width="0.1524" layer="91"/>
+<wire x1="181.61" y1="-16.51" x2="181.61" y2="-24.13" width="0.1524" layer="91"/>
+<wire x1="181.61" y1="-24.13" x2="148.59" y2="-24.13" width="0.1524" layer="91"/>
+<pinref part="U$3" gate="G$1" pin="ADJ"/>
+<pinref part="X2" gate="-1" pin="K"/>
+<wire x1="181.61" y1="-16.51" x2="191.77" y2="-16.51" width="0.1524" layer="91"/>
+<junction x="181.61" y="-16.51"/>
+<label x="182.88" y="-16.51" size="1.778" layer="95"/>
 </segment>
 </net>
 <net name="AT-PWM" class="0">
@@ -13458,7 +13457,6 @@ Source: www.e-switch.com .. 5500.pdf</description>
 <segment>
 <pinref part="U2" gate="A" pin="PB3"/>
 <wire x1="229.87" y1="-59.69" x2="241.3" y2="-59.69" width="0.1524" layer="91"/>
-<label x="187.96" y="-16.51" size="1.778" layer="95"/>
 <wire x1="241.3" y1="-59.69" x2="241.3" y2="-55.88" width="0.1524" layer="91"/>
 <pinref part="JP2" gate="G$1" pin="3"/>
 <wire x1="241.3" y1="-55.88" x2="251.46" y2="-55.88" width="0.1524" layer="91"/>
