@@ -65,21 +65,21 @@
 <hole x="3.4798" y="78.4098" drill="3.2"/>
 <hole x="73.025" y="74.93" drill="3.2"/>
 <hole x="73.0758" y="19.0246" drill="3.2"/>
-<text x="16.51" y="30.48" size="1.27" layer="21">The USB DC voltage power supply will connect into a
+<text x="72.39" y="41.91" size="1.778" layer="21" rot="R180">The USB DC voltage power supply will connect into a
 USB port to output a specific voltage. These voltages will
 be adjustable with a display of the output voltage. The
 output current has a maximum value it can not exceed.
 The purpose of this project is to create a DC power 
 supply for testing small circuits away from the laboratory.</text>
 <text x="21.59" y="43.18" size="1.778" layer="21">teamNACHO USB Power Supply</text>
-<text x="25.4" y="24.13" size="1.6764" layer="21" align="center">Adam Steven Hastings
+<text x="19.05" y="20.32" size="1.6764" layer="21" align="center">Adam Steven Hastings
 "Electrical Engineer"
 Class of 2016*</text>
-<text x="52.07" y="24.13" size="1.6764" layer="21" align="center">Nicholas Patrick Clark
+<text x="58.42" y="20.32" size="1.6764" layer="21" align="center">Nicholas Patrick Clark
 "Electrical Engineer"
 Class of 2016*</text>
 <text x="39.37" y="17.78" size="1.6764" layer="22" rot="MR0" align="center">*Dates may change due to unforseen circumstances</text>
-<text x="63.5" y="39.37" size="1.6764" layer="22" rot="MR0">Inputs and Outputs:
+<text x="72.39" y="38.1" size="1.6764" layer="22" rot="MR0">Inputs and Outputs:
 IN - DC voltage from the USB port.
 IN - User determined voltage setting.
 OUT - Variable DC voltage output. 
@@ -1488,20 +1488,20 @@ design rules under a new name.</description>
 </pass>
 </autorouter>
 <elements>
-<element name="C1" library="rcl" package="C0805" value="10u" x="22.86" y="74.93" smashed="yes" rot="MR90">
-<attribute name="NAME" x="24.13" y="73.66" size="1.27" layer="26" rot="MR90"/>
+<element name="C1" library="rcl" package="C0805" value="10u" x="21.59" y="74.93" smashed="yes" rot="MR90">
+<attribute name="NAME" x="22.86" y="73.66" size="1.27" layer="26" rot="MR90"/>
 </element>
 <element name="C2" library="rcl" package="C0805" value="0.1u" x="26.67" y="74.93" smashed="yes" rot="MR90">
 <attribute name="NAME" x="27.94" y="74.93" size="1.27" layer="26" rot="MR90"/>
 </element>
-<element name="R1" library="rcl" package="R0805" value="1k" x="22.86" y="78.74" smashed="yes" rot="MR90">
-<attribute name="NAME" x="24.13" y="78.105" size="1.27" layer="26" rot="MR90"/>
+<element name="R1" library="rcl" package="R0805" value="1k" x="21.59" y="78.74" smashed="yes" rot="MR90">
+<attribute name="NAME" x="22.86" y="78.105" size="1.27" layer="26" rot="MR90"/>
 </element>
 <element name="R2" library="rcl" package="R0805" value="1k" x="26.67" y="78.74" smashed="yes" rot="MR270">
 <attribute name="NAME" x="29.21" y="79.375" size="1.27" layer="26" rot="MR270"/>
 </element>
-<element name="S1" library="switch" package="5501" value="5501" x="6.35" y="33.02" rot="R270"/>
-<element name="S2" library="switch" package="5501" value="5501" x="69.85" y="33.02" rot="R270"/>
+<element name="S1" library="switch" package="5501" value="5501" x="6.35" y="54.61" rot="R270"/>
+<element name="S2" library="switch" package="5501" value="5501" x="69.85" y="54.61" rot="R270"/>
 <element name="SV1" library="con-lstb" package="MA06-1" value="" x="38.1" y="78.74" rot="R180">
 <attribute name="OC_NEWARK" value="unknown" x="38.1" y="78.74" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="MF" value="" x="38.1" y="78.74" size="1.778" layer="27" rot="R180" display="off"/>
@@ -1514,26 +1514,40 @@ design rules under a new name.</description>
 <signal name="N$3">
 <contactref element="SV1" pad="3"/>
 <contactref element="U$1" pad="C"/>
-<wire x1="41.91" y1="73.66" x2="39.37" y2="78.74" width="0" layer="19" extent="1-1"/>
+<wire x1="39.37" y1="78.74" x2="39.37" y2="76.2" width="0.4064" layer="16"/>
+<wire x1="39.37" y1="76.2" x2="41.91" y2="73.66" width="0.4064" layer="16"/>
 </signal>
 <signal name="N$4">
 <contactref element="SV1" pad="4"/>
 <contactref element="U$1" pad="D"/>
-<wire x1="39.37" y1="73.66" x2="36.83" y2="78.74" width="0" layer="19" extent="1-1"/>
+<wire x1="36.83" y1="78.74" x2="36.83" y2="76.2" width="0.4064" layer="16"/>
+<wire x1="36.83" y1="76.2" x2="39.37" y2="73.66" width="0.4064" layer="16"/>
 </signal>
 <signal name="N$5">
 <contactref element="SV1" pad="5"/>
 <contactref element="S1" pad="NO"/>
 <contactref element="R1" pad="1"/>
-<wire x1="22.86" y1="77.79" x2="34.29" y2="78.74" width="0" layer="19" extent="16-16"/>
-<wire x1="10.16" y1="27.94" x2="22.86" y2="77.79" width="0" layer="19" extent="16-16"/>
+<wire x1="10.16" y1="49.53" x2="7.62" y2="27.94" width="0.4064" layer="16"/>
+<wire x1="7.62" y1="27.94" x2="7.62" y2="77.47" width="0.4064" layer="16"/>
+<wire x1="22.86" y1="77.47" x2="21.59" y2="77.79" width="0.4064" layer="16"/>
+<wire x1="34.29" y1="78.74" x2="34.29" y2="76.2" width="0.4064" layer="1"/>
+<wire x1="34.29" y1="76.2" x2="24.13" y2="76.2" width="0.4064" layer="1"/>
+<via x="24.13" y="76.2" extent="1-16" drill="0.6" shape="square"/>
+<wire x1="24.13" y1="76.2" x2="22.54" y2="77.79" width="0.4064" layer="16"/>
+<wire x1="22.54" y1="77.79" x2="21.59" y2="77.79" width="0.4064" layer="16"/>
+<wire x1="7.62" y1="77.47" x2="7.94" y2="77.79" width="0.4064" layer="16"/>
+<wire x1="7.94" y1="77.79" x2="21.59" y2="77.79" width="0.4064" layer="16"/>
 </signal>
 <signal name="N$6">
 <contactref element="SV1" pad="6"/>
 <contactref element="S2" pad="NO"/>
 <contactref element="R2" pad="1"/>
-<wire x1="26.67" y1="79.69" x2="31.75" y2="78.74" width="0" layer="19" extent="16-16"/>
-<wire x1="73.66" y1="27.94" x2="31.75" y2="78.74" width="0" layer="19" extent="1-1"/>
+<wire x1="31.75" y1="78.74" x2="30.8" y2="79.69" width="0.4064" layer="16"/>
+<wire x1="30.8" y1="79.69" x2="26.67" y2="79.69" width="0.4064" layer="16"/>
+<wire x1="73.66" y1="49.53" x2="31.75" y2="69.85" width="0.4064" layer="1"/>
+<wire x1="31.75" y1="69.85" x2="31.75" y2="74.93" width="0.4064" layer="1"/>
+<via x="31.75" y="74.93" extent="1-16" drill="0.6" shape="square"/>
+<wire x1="31.75" y1="74.93" x2="31.75" y2="78.74" width="0.4064" layer="16"/>
 </signal>
 <signal name="GND">
 <contactref element="SV1" pad="2"/>
@@ -1564,11 +1578,20 @@ design rules under a new name.</description>
 <contactref element="C2" pad="1"/>
 <contactref element="S1" pad="1A"/>
 <contactref element="S2" pad="1A"/>
-<wire x1="34.29" y1="73.66" x2="44.45" y2="78.74" width="0" layer="19" extent="1-1"/>
-<wire x1="26.67" y1="73.98" x2="34.29" y2="73.66" width="0" layer="19" extent="16-16"/>
-<wire x1="22.86" y1="73.98" x2="26.67" y2="73.98" width="0" layer="19" extent="16-16"/>
-<wire x1="10.16" y1="33.02" x2="22.86" y2="73.98" width="0" layer="19" extent="16-16"/>
-<wire x1="73.66" y1="33.02" x2="44.45" y2="78.74" width="0" layer="19" extent="1-1"/>
+<wire x1="10.16" y1="54.61" x2="21.59" y2="33.02" width="0.4064" layer="16"/>
+<wire x1="21.59" y1="33.02" x2="21.59" y2="73.98" width="0.4064" layer="16"/>
+<wire x1="21.59" y1="73.98" x2="26.67" y2="73.98" width="0.4064" layer="16"/>
+<wire x1="44.45" y1="78.74" x2="44.45" y2="76.2" width="0.4064" layer="1"/>
+<wire x1="44.45" y1="76.2" x2="43.18" y2="74.93" width="0.4064" layer="1"/>
+<wire x1="43.18" y1="74.93" x2="35.56" y2="74.93" width="0.4064" layer="1"/>
+<wire x1="35.56" y1="74.93" x2="34.29" y2="73.66" width="0.4064" layer="1"/>
+<wire x1="34.29" y1="73.66" x2="33.02" y2="72.39" width="0.4064" layer="16"/>
+<wire x1="33.02" y1="72.39" x2="27.94" y2="72.39" width="0.4064" layer="16"/>
+<wire x1="27.94" y1="72.39" x2="26.67" y2="73.66" width="0.4064" layer="16"/>
+<wire x1="26.67" y1="73.66" x2="26.67" y2="73.98" width="0.4064" layer="16"/>
+<wire x1="73.66" y1="54.61" x2="71.12" y2="30.48" width="0.4064" layer="16"/>
+<wire x1="71.12" y1="30.48" x2="25.4" y2="30.48" width="0.4064" layer="16"/>
+<wire x1="25.4" y1="30.48" x2="21.59" y2="33.02" width="0.4064" layer="16"/>
 </signal>
 </signals>
 </board>

@@ -22,25 +22,25 @@
 <layer number="26" name="bNames" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="27" name="tValues" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="28" name="bValues" color="7" fill="1" visible="yes" active="yes"/>
-<layer number="29" name="tStop" color="7" fill="3" visible="no" active="yes"/>
-<layer number="30" name="bStop" color="7" fill="6" visible="no" active="yes"/>
-<layer number="31" name="tCream" color="7" fill="4" visible="no" active="yes"/>
-<layer number="32" name="bCream" color="7" fill="5" visible="no" active="yes"/>
-<layer number="33" name="tFinish" color="6" fill="3" visible="no" active="yes"/>
-<layer number="34" name="bFinish" color="6" fill="6" visible="no" active="yes"/>
-<layer number="35" name="tGlue" color="7" fill="4" visible="no" active="yes"/>
-<layer number="36" name="bGlue" color="7" fill="5" visible="no" active="yes"/>
-<layer number="37" name="tTest" color="7" fill="1" visible="no" active="yes"/>
-<layer number="38" name="bTest" color="7" fill="1" visible="no" active="yes"/>
+<layer number="29" name="tStop" color="7" fill="3" visible="yes" active="yes"/>
+<layer number="30" name="bStop" color="7" fill="6" visible="yes" active="yes"/>
+<layer number="31" name="tCream" color="7" fill="4" visible="yes" active="yes"/>
+<layer number="32" name="bCream" color="7" fill="5" visible="yes" active="yes"/>
+<layer number="33" name="tFinish" color="6" fill="3" visible="yes" active="yes"/>
+<layer number="34" name="bFinish" color="6" fill="6" visible="yes" active="yes"/>
+<layer number="35" name="tGlue" color="7" fill="4" visible="yes" active="yes"/>
+<layer number="36" name="bGlue" color="7" fill="5" visible="yes" active="yes"/>
+<layer number="37" name="tTest" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="38" name="bTest" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="39" name="tKeepout" color="4" fill="11" visible="yes" active="yes"/>
 <layer number="40" name="bKeepout" color="1" fill="11" visible="yes" active="yes"/>
 <layer number="41" name="tRestrict" color="4" fill="10" visible="yes" active="yes"/>
 <layer number="42" name="bRestrict" color="1" fill="10" visible="yes" active="yes"/>
 <layer number="43" name="vRestrict" color="2" fill="10" visible="yes" active="yes"/>
-<layer number="44" name="Drills" color="7" fill="1" visible="no" active="yes"/>
+<layer number="44" name="Drills" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="45" name="Holes" color="7" fill="1" visible="yes" active="yes"/>
-<layer number="46" name="Milling" color="3" fill="1" visible="no" active="yes"/>
-<layer number="47" name="Measures" color="7" fill="1" visible="no" active="yes"/>
+<layer number="46" name="Milling" color="3" fill="1" visible="yes" active="yes"/>
+<layer number="47" name="Measures" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="48" name="Document" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="49" name="Reference" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="51" name="tDocu" color="7" fill="1" visible="yes" active="yes"/>
@@ -65,20 +65,23 @@
 <hole x="3.4798" y="78.4098" drill="3.2"/>
 <hole x="73.025" y="74.93" drill="3.2"/>
 <hole x="73.0758" y="19.0246" drill="3.2"/>
-<text x="16.51" y="30.48" size="1.27" layer="21">The USB DC voltage power supply will connect into a
-USB port to output a specific voltage. These voltages will
-be adjustable with a display of the output voltage. The
-output current has a maximum value it can not exceed.
-The purpose of this project is to create a DC power 
-supply for testing small circuits away from the laboratory.</text>
-<text x="21.59" y="43.18" size="1.778" layer="21">teamNACHO USB Power Supply</text>
-<text x="25.4" y="24.13" size="1.6764" layer="21" align="center">Adam Steven Hastings
+<text x="38.1" y="25.4" size="1.27" layer="21" align="bottom-center">The USB DC voltage power supply will 
+connect into a USB port to output a 
+specific voltage. These voltages will be
+adjustable with a display of the output 
+voltage. The output current has a 
+maximum value it can not exceed. The 
+purpose of this project is to create a DC 
+power supply for testing small circuits
+away from the laboratory.</text>
+<text x="38.1" y="43.18" size="1.778" layer="21" align="bottom-center">teamNACHO USB Power Supply</text>
+<text x="21.59" y="20.32" size="1.6764" layer="21" align="center">Adam Steven Hastings
 "Electrical Engineer"
 Class of 2016*</text>
-<text x="52.07" y="24.13" size="1.6764" layer="21" align="center">Nicholas Patrick Clark
+<text x="54.61" y="20.32" size="1.6764" layer="21" align="center">Nicholas Patrick Clark
 "Electrical Engineer"
 Class of 2016*</text>
-<text x="39.37" y="17.78" size="1.6764" layer="22" rot="MR0" align="center">*Dates may change due to unforseen circumstances</text>
+<text x="38.1" y="19.05" size="1.016" layer="22" rot="MR0" align="center">*Dates may change due to unforseen circumstances</text>
 <text x="72.39" y="38.1" size="1.6764" layer="22" rot="MR0">Inputs and Outputs:
 IN - DC voltage from the USB port.
 IN - User determined voltage setting.
@@ -87,13 +90,13 @@ OUT - Display of output voltage.
 OUT - Max output current for the system
 
 Specifications:
-- The output voltage will range between 1 VDC or lower,
-       and 12 VDC or higher.
+- The output voltage will range between 1 
+   VDC or lower, and 12 VDC or higher.
 - At 1 VDC, the tolerance will be ± 50 mV.
 - At 12 VDC, the tolerance will be ± 600 mV.
-- The maximum output current will be 100 mA with a
-       tolerance of ± 10mA.</text>
-<text x="38.1" y="26.67" size="1.6764" layer="22" rot="MR0" align="center">Special Thanks:
+- The maximum output current will be 
+   100 mA with a tolerance of ± 10mA.</text>
+<text x="38.1" y="25.4" size="1.6764" layer="22" rot="MR0" align="center">Special Thanks:
 Shane Veilleux
 Team Bradbury (Back Row Crew)</text>
 </plain>
@@ -1500,8 +1503,8 @@ design rules under a new name.</description>
 <element name="R2" library="rcl" package="R0805" value="1k" x="26.67" y="78.74" smashed="yes" rot="MR270">
 <attribute name="NAME" x="29.21" y="79.375" size="1.27" layer="26" rot="MR270"/>
 </element>
-<element name="S1" library="switch" package="5501" value="5501" x="6.35" y="33.02" rot="R270"/>
-<element name="S2" library="switch" package="5501" value="5501" x="69.85" y="33.02" rot="R270"/>
+<element name="S1" library="switch" package="5501" value="5501" x="8.89" y="35.56" rot="R270"/>
+<element name="S2" library="switch" package="5501" value="5501" x="67.31" y="35.56" rot="R270"/>
 <element name="SV1" library="con-lstb" package="MA06-1" value="" x="38.1" y="78.74" rot="R180">
 <attribute name="OC_NEWARK" value="unknown" x="38.1" y="78.74" size="1.778" layer="27" rot="R180" display="off"/>
 <attribute name="MF" value="" x="38.1" y="78.74" size="1.778" layer="27" rot="R180" display="off"/>
@@ -1527,8 +1530,8 @@ design rules under a new name.</description>
 <contactref element="SV1" pad="5"/>
 <contactref element="S1" pad="NO"/>
 <contactref element="R1" pad="1"/>
-<wire x1="10.16" y1="27.94" x2="7.62" y2="27.94" width="0.4064" layer="16"/>
-<wire x1="7.62" y1="27.94" x2="7.62" y2="77.47" width="0.4064" layer="16"/>
+<wire x1="12.7" y1="30.48" x2="6.35" y2="26.67" width="0.4064" layer="16"/>
+<wire x1="6.35" y1="26.67" x2="7.62" y2="77.47" width="0.4064" layer="16"/>
 <wire x1="22.86" y1="77.47" x2="21.59" y2="77.79" width="0.4064" layer="16"/>
 <wire x1="34.29" y1="78.74" x2="34.29" y2="76.2" width="0.4064" layer="1"/>
 <wire x1="34.29" y1="76.2" x2="24.13" y2="76.2" width="0.4064" layer="1"/>
@@ -1544,7 +1547,7 @@ design rules under a new name.</description>
 <contactref element="R2" pad="1"/>
 <wire x1="31.75" y1="78.74" x2="30.8" y2="79.69" width="0.4064" layer="16"/>
 <wire x1="30.8" y1="79.69" x2="26.67" y2="79.69" width="0.4064" layer="16"/>
-<wire x1="73.66" y1="27.94" x2="31.75" y2="69.85" width="0.4064" layer="1"/>
+<wire x1="71.12" y1="30.48" x2="31.75" y2="69.85" width="0.4064" layer="1"/>
 <wire x1="31.75" y1="69.85" x2="31.75" y2="74.93" width="0.4064" layer="1"/>
 <via x="31.75" y="74.93" extent="1-16" drill="0.6" shape="square"/>
 <wire x1="31.75" y1="74.93" x2="31.75" y2="78.74" width="0.4064" layer="16"/>
@@ -1578,8 +1581,8 @@ design rules under a new name.</description>
 <contactref element="C2" pad="1"/>
 <contactref element="S1" pad="1A"/>
 <contactref element="S2" pad="1A"/>
-<wire x1="10.16" y1="33.02" x2="21.59" y2="33.02" width="0.4064" layer="16"/>
-<wire x1="21.59" y1="33.02" x2="21.59" y2="73.98" width="0.4064" layer="16"/>
+<wire x1="12.7" y1="35.56" x2="19.05" y2="34.29" width="0.4064" layer="16"/>
+<wire x1="19.05" y1="34.29" x2="21.59" y2="73.98" width="0.4064" layer="16"/>
 <wire x1="21.59" y1="73.98" x2="26.67" y2="73.98" width="0.4064" layer="16"/>
 <wire x1="44.45" y1="78.74" x2="44.45" y2="76.2" width="0.4064" layer="1"/>
 <wire x1="44.45" y1="76.2" x2="43.18" y2="74.93" width="0.4064" layer="1"/>
@@ -1589,9 +1592,9 @@ design rules under a new name.</description>
 <wire x1="33.02" y1="72.39" x2="27.94" y2="72.39" width="0.4064" layer="16"/>
 <wire x1="27.94" y1="72.39" x2="26.67" y2="73.66" width="0.4064" layer="16"/>
 <wire x1="26.67" y1="73.66" x2="26.67" y2="73.98" width="0.4064" layer="16"/>
-<wire x1="73.66" y1="33.02" x2="71.12" y2="30.48" width="0.4064" layer="16"/>
-<wire x1="71.12" y1="30.48" x2="25.4" y2="30.48" width="0.4064" layer="16"/>
-<wire x1="25.4" y1="30.48" x2="21.59" y2="33.02" width="0.4064" layer="16"/>
+<wire x1="71.12" y1="35.56" x2="69.85" y2="29.21" width="0.4064" layer="16"/>
+<wire x1="69.85" y1="29.21" x2="24.13" y2="29.21" width="0.4064" layer="16"/>
+<wire x1="24.13" y1="29.21" x2="19.05" y2="34.29" width="0.4064" layer="16"/>
 </signal>
 </signals>
 </board>
