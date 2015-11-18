@@ -1,46 +1,22 @@
 // PID Loop Program
 
-#include <Wire.h>
-#include "Adafruit_LEDBackpack.h"
-#include "Adafruit_GFX.h"
+#include "inits.h"
+#include "display.h"
 
-<<<<<<< HEAD
 #define constFive 5
-#define PWMOutput 6
-#define button2 7
-#define button 8
+//#define PWMOutput 6
 
-#define feedback 13
+//#define feedback 13
 
 
-=======
 int PWMOutput = 6;
 int pot = A0;
 int feedback = A1;
->>>>>>> parent of c803317... added reading PWM duty cycle
+
 // A4 = DAT
 // A5 = CLC
 
-Adafruit_7segment matrix = Adafruit_7segment();
-//////////////////////////////////////////////////
 
-int x;
-
-int bounceTime = 50;
-int holdTime = 32000;
-
-int lastReading = LOW;
-int lastReading2 = LOW;
-
-int hold = 0;
-int hold2 = 0;
-
-int single = 0;
-int single2 = 0;
-
-long onTime = 0;
-long lastSwitchTime = 0;
-///////////////////////////////////////////////////
 /*-------------------------------------------*/
 int kP = 1.9;
 int kD = .95;
@@ -54,17 +30,7 @@ long SampleTime = 25; //miliseconds
 
 
 void setup() {
-  TCCR0B = TCCR0B & B11111000 | B00000001;     // Prescale factor of 1 to get a Fpwm = 62.5kHz
-  Serial.begin(9600);
-  matrix.begin(0x70);
-  millis();
-  pinMode(button, INPUT);
-  pinMode(button2, INPUT);
-<<<<<<< HEAD
-  pinMode(feedback, INPUT);
-  //pinMode(0, INPUT);
-=======
->>>>>>> parent of c803317... added reading PWM duty cycle
+  void inits();
 }
   
 void loop() {
@@ -90,81 +56,9 @@ void loop() {
 
 
 }
-void displayValue (int value){
-  matrix.print(value,DEC);
-  //matrix.writeDigitNum(1,true);
-  matrix.blinkRate(0);
-  matrix.drawColon(true);
-  matrix.writeDisplay();
-}
 
-int WhatTheNumber (){
-  int maxValue = 1250;
-  int minValue = 50;
-  int reading = digitalRead(button);
-  int reading2 = digitalRead(button2);
-  
-  //first pressed
-   if (reading == HIGH && lastReading == LOW && reading2 == LOW) {
-     onTime = millis();
-     Serial.println("press");
-     x=x+10;
-   }
-  
-  //held
-   if (reading == HIGH && lastReading == HIGH && reading2 == LOW) {
-     if ((millis() - onTime) > holdTime) {
-       Serial.println("holding");
-       x=x+10; 
-       hold = 1;
-     }
-   }
-  
-  //released
-   if (reading == LOW && lastReading == HIGH) {
-     if (hold == 1) {
-       Serial.println("let go");
-       hold = 0;
-     }   
-   }
-   
-   lastReading = reading;
-  
-  //DECREMENT SETUP
-  
-  
-  //first pressed
-   if (reading2 == HIGH && lastReading2 == LOW && reading == LOW) {
-     onTime = millis();
-     Serial.println("press");
-     x=x-10;
-   }
-  
-  //held
-   if (reading2 == HIGH && lastReading2 == HIGH && reading == LOW) {
-     if ((millis() - onTime) > holdTime) {
-       Serial.println("holding");
-        x=x-10; 
-       hold2 = 1;
-     }
-   }
-  
-  //released
-   if (reading2 == LOW && lastReading2 == HIGH) {
-     if (hold2 == 1) {
-       Serial.println("let go");
-       hold2 = 0;
-     }   
-   }
-   if(x > maxValue){
-    x = maxValue;
-   }
-   if(x < minValue){
-    x = minValue;
-   }
-   lastReading2 = reading2;
-   return x;
-}
+
+
 
 int calcFeedback(){
 
@@ -221,7 +115,3 @@ int PIDcontroller(double Desired, double Actual){
   return Duty;
 }
 
-<<<<<<< HEAD
-
-=======
->>>>>>> parent of c803317... added reading PWM duty cycle
