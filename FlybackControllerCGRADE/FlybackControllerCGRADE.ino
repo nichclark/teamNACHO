@@ -86,8 +86,8 @@ void loop() {
     else{
       Integral = 0;
     }
-    P = Error * 0.02;//multiply error by proportional term
-    I = Integral * 0.01;
+    P = Error * 0.2;//multiply error by proportional term
+    I = Integral * 1;
     Duty = P + I;
   
     if(Duty > 1000){
@@ -106,7 +106,7 @@ void loop() {
     Serial.print(Duty);Serial.print(", ");
     Serial.println(DutyCycle);
   }
-  analogWrite(PWMOutput, 1);
+  analogWrite(PWMOutput, DutyCycle);
   
 }
 /*
