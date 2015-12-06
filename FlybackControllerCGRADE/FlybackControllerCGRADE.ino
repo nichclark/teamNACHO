@@ -57,7 +57,7 @@ int kP = 1.05;
 int kI = 0;
 int kD = 1;
 int IntegralRange = 500;
-long SampleTime = 25; //miliseconds
+long SampleTime = 50; //miliseconds
 /*-------------------------------------------*/
 
 void setup() {
@@ -70,6 +70,7 @@ void loop() {
   int OutputSignal;
   long CurrentTime = millis()/64;
   Desired = analogRead(pot);
+  //Desired = 200;
   Actual = analogRead(feedback);  
   
   if(CurrentTime - LastTime > SampleTime){
@@ -85,10 +86,9 @@ void loop() {
     else{
       Integral = 0;
     }
-    P = Error * 1.1;//multiply error by proportional term
-    I = Integral * 1;
-    D = (Last - Actual) * 1;
-    Duty = P + I + D;
+    P = Error * 0.02;//multiply error by proportional term
+    I = Integral * 0.01;
+    Duty = P + I;
   
     if(Duty > 1000){
       Duty = 1000;
@@ -106,7 +106,7 @@ void loop() {
     Serial.print(Duty);Serial.print(", ");
     Serial.println(DutyCycle);
   }
-  analogWrite(PWMOutput, DutyCycle);
+  analogWrite(PWMOutput, 1);
   
 }
 /*
