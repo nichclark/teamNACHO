@@ -1,5 +1,19 @@
 // PID Loop Program
 
+/*
+For 1V:
+kP = 1.6
+kI = 1
+kD = 1
+
+50ohm = 74/255 duty
+68ohm = 71/255 duty
+100ohm = 67/255 duty
+200ohm = 60/255 duty
+5kohm = couldn't get with in 50mV tolerance
+
+*/
+
 int PWMOutput = 6;
 int pot = A0;
 int feedback = A1;
@@ -13,25 +27,28 @@ int P = 0;
 int I = 0;
 int D = 0;
 int Duty = 0;
+int Actual = 0;
+int Desired = 0;
 
 /*-------------------------------------------*/
-int kP = 1.9;
-int kD = 0;
-int kI = 0;
-int IntegralRange = 200;
+int kP = 1.6;
+int kD = 1;
+int kI = 1;
+int IntegralRange = 500;
 long SampleTime = 25; //miliseconds
 /*-------------------------------------------*/
 
 void setup() {
   TCCR0B = (TCCR0B & 0b11111000) | 0x01;
   Serial.begin(9600);
+  
 }
   
 void loop() {
   int OutputSignal;
   long CurrentTime = millis()/64;
-  int Desired = analogRead(pot);
-  int Actual = analogRead(feedback);  
+  Desired = analogRead(pot);
+  Actual = analogRead(feedback);  
   
   if(CurrentTime - LastTime > SampleTime){
     /*OutputSignal = PIDcontroller(Desired,Actual);
@@ -64,13 +81,14 @@ void loop() {
     
     Last = Actual;
     LastTime = CurrentTime;
+    Serial.print("Output Duty = ");
+    Serial.print(Duty);Serial.print(", ");
+    Serial.println(DutyCycle);
   }
   analogWrite(PWMOutput, DutyCycle);
-  Serial.print("Output Duty = ");
-  Serial.print(Duty);Serial.print(", ");
-  Serial.println(DutyCycle);
+  
 }
-
+/*
 int PIDcontroller(int Desired, int Actual){
   int Last;
   int Integral;
@@ -102,4 +120,4 @@ int PIDcontroller(int Desired, int Actual){
   Serial.print(Duty);Serial.print(",");Serial.println(DutyCycle);
   return DutyCycle;
 }
-
+*/
