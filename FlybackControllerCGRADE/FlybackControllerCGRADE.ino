@@ -53,8 +53,8 @@ int Actual = 0;
 int Desired = 0;
 
 /*-------------------------------------------*/
-int kP = 1.2;
-int kI = 1;
+int kP = 1.05;
+int kI = 0;
 int kD = 1;
 int IntegralRange = 500;
 long SampleTime = 25; //miliseconds
@@ -85,13 +85,13 @@ void loop() {
     else{
       Integral = 0;
     }
-    P = Error * kP;//multiply error by proportional term
-    I = Integral * kI;
-    D = (Last - Actual) * kD;
+    P = Error * 1.1;//multiply error by proportional term
+    I = Integral * 1;
+    D = (Last - Actual) * 1;
     Duty = P + I + D;
   
-    if(Duty > 1024){
-      Duty = 1024;
+    if(Duty > 1000){
+      Duty = 1000;
     }
     if(Duty < 0){
       Duty = 0;
