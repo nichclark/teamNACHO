@@ -12,6 +12,28 @@ kD = 1
 200ohm = 60/255 duty
 5kohm = couldn't get with in 50mV tolerance
 
+For 5V:
+kP = 1.4
+kI = 1
+kD = 1
+
+50ohm = 144/255 duty
+68ohm = 138/255 duty
+100ohm = 131/255 duty
+200ohm = 128/255 duty
+5kohm = couldn't get with in 250mV tolerance (105/255)=5.45V
+
+For 12V:
+kP = 1.4
+kI = 1
+kD = 1
+
+50ohm = /255 duty
+68ohm = /255 duty
+100ohm = /255 duty
+200ohm = -/255 duty
+5kohm = couldn't get with in 250mV tolerance (105/255)=5.45V
+
 */
 
 int PWMOutput = 6;
@@ -31,9 +53,9 @@ int Actual = 0;
 int Desired = 0;
 
 /*-------------------------------------------*/
-int kP = 1.6;
-int kD = 1;
+int kP = 1.2;
 int kI = 1;
+int kD = 1;
 int IntegralRange = 500;
 long SampleTime = 25; //miliseconds
 /*-------------------------------------------*/
@@ -63,14 +85,13 @@ void loop() {
     else{
       Integral = 0;
     }
-    
-    P = Error * kP;   //multiply error by proportional term
+    P = Error * kP;//multiply error by proportional term
     I = Integral * kI;
     D = (Last - Actual) * kD;
     Duty = P + I + D;
   
-    if(Duty > 1000){
-      Duty = 1000;
+    if(Duty > 1024){
+      Duty = 1024;
     }
     if(Duty < 0){
       Duty = 0;
