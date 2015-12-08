@@ -12,7 +12,7 @@
  */
 //Include the following header files
 #include "inits.h"
-#include "display.h"
+/*#include "display.h"*/
 #include "userinput.h"
 #include "PIDcontrol.h"
 #include "feedback.h"
@@ -20,47 +20,63 @@
 #include "Wire.h"
 #include "Adafruit_LEDBackpack.h"
 #include "Adafruit_GFX.h"
+Adafruit_7segment matrix = Adafruit_7segment();
 
-// These variables correspond to pins on the Arduino
-#define PWMOutput   6
-#define pot        A0
-#define feedback   A1
+//These variables correspond to pins on the Arduino
+#define Vopto 4
+#define PWMOutput OCR0A //pin D6
+#define ConstOutput OCR0B //pin D5
+//pin D7 = PB1
+//pin D8 = PB2
+//pin A4 = DAT for 7segDisplay
+//pin A5 = CLK for 7segDisplay
+
+//Define variables that set the max range of the power supply (x100)
+#define maxValue 1250
+#define minValue 50
+#define SetDuty 160
 // These global variables are initialized and set to zero
+int DutyCycle = 0;
 long LastTime = 0;
+int Desired = 0;
+int Actual = 0;
 
 //The follow varables are what get used in the PID loop
-#define kP                0.2 //proportional constant
-#define kI                  1 //integral constant
-#define kD                  0 //derivative constant
-#define IntegralRange     500 //sets when the intergral term start taking effect
-#define SampleTime         50 //how often PID loop runs in miliseconds
+#define kP 0.1 //proportional constant
+#define kI 0 //integral constant
+#define kD 0 //derivative constant
+#define IntegralRange 500 //sets when the intergral term start taking effect
+#define SampleTime 500 //how often PID loop runs in miliseconds
 
+//Adafruit_7segment matrix = Adafruit_7segment();
 void setup() {
-  initializations();
+  initializations(SampleTime);
+  matrix.begin(0x70);
 }
-  
 void loop() {
-  int DutyCycle;
-  //Since clock was changed to 62.5kHz, had to divide clock by 64(0x04) to
-  //be able to look at the clock in milliseconds
-  long CurrentTime = millis()/64;
-  //Reading the user input
-  int Desired = userInput();
-  //Reading the output voltage 
-  int Actual = calcFeedback(feedback); 
-
-  //How oftem the PID loop runs is set by the SampleTime Variable.
-  if(CurrentTime - LastTime > SampleTime){
-    //Run the PID loop with the defined constants from above
-    DutyCycle = PIDcontrol(kP,kI,kD,IntegralRange);
-    //Save the current time to make sure the PID loop runs at the correct
-    //sample time
-    LastTime = CurrentTime;
-  }
-  //The duty cycle controls the output of this pin. Since this command is
-  //outside of the PID loop, the pin with have a constant duty cycle for 
-  //every clock cycle until the PID loop is run. When the PID loop is run,
-  //the output duty cycle is changed and will now be constant till the next time.
-  analogWrite(PWMOutput, DutyCycle);
+  //Desired = userInput(minValue,maxValue);
+  Desired = map(5,0,1250,0,1024);
+  Actual = calcFeedback(Vopto); 
+  displayValue(Desired);
+  PWMOutput = DutyCycle;
+  ConstOutput = SetDuty;
+}
+void displayValue (int value){
+  int A;int B;int C;int D;
+  //value will have a max value of 1250
+  value = map(value,0,1024,minValue,maxValue);
+  A = value/1000;
+  B = (value/100) - (A*10);
+  C = (value/10) - (A*100) - (B*10);
+  D = (value/1) - (A*1000) - (B*100) - (C*10);
+  
+  matrix.writeDigitNum(0,A);
+  matrix.writeDigitNum(1,B,true);
+  matrix.writeDigitNum(3,C);
+  matrix.writeDigitNum(4,D);
+  matrix.writeDisplay();
+}
+ISR(TIMER1_COMPA_vect){
+  DutyCycle = PIDcontrol(kP,kI,kD,IntegralRange,Desired,Actual);
 }
 
