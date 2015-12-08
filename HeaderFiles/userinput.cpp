@@ -2,14 +2,13 @@
 #include <arduino.h>
 #include <avr/io.h>
 
-#define button2 7
-#define button 8
+#define button 7
+#define button2 8
 #define bounceTime 50
 #define holdTime 32000
-#define maxValue 125
-#define minValue 5
 
-int userInput (){
+
+int userInput (int minValue, int maxValue){
 	int x;
 
 	int lastReading = LOW;
@@ -24,8 +23,8 @@ int userInput (){
 	long onTime = 0;
 	long lastSwitchTime = 0;
 	
-	int reading = digitalRead(button);
-	int reading2 = digitalRead(button2);
+	int reading =! digitalRead(button);
+	int reading2 =! digitalRead(button2);
 	
 	//first pressed
 	if (reading == HIGH && lastReading == LOW && reading2 == LOW) {
