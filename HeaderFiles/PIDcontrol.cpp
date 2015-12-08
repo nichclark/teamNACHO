@@ -3,7 +3,7 @@
 #include <avr/io.h>
 
 
-int PIDcontrol(int kP,int kI,int kD,int IntegralRange){
+int PIDcontrol(int kP,int kI,int kD,int IntegralRange,int Desired,int Actual){
 	int Last = 0;
 	int Integral = 0;
 	int DutyCycle = 0;
@@ -12,8 +12,6 @@ int PIDcontrol(int kP,int kI,int kD,int IntegralRange){
 	int I = 0;
 	int D = 0;
 	int Duty = 0;
-	int Actual = 0;
-	int Desired = 0;
 	
 	//Calculate the error in the output voltage
 	Error = Desired - Actual;
@@ -43,9 +41,8 @@ int PIDcontrol(int kP,int kI,int kD,int IntegralRange){
 	DutyCycle = map(Duty, 0, 1024, 0, 255);
 	//Save the current user input to be used to calculate the derivative
 	Last = Actual;
-	Serial.print("Error equals ");
-	Serial.print(Error);Serial.print(", ");
-	Serial.print("Output Duty = ");
-	Serial.print(Duty);Serial.print(", ");
-	Serial.println(DutyCycle);
+	Serial.print("Desired = ");Serial.print(Desired);Serial.print(", ");
+	Serial.print("Actual = ");Serial.print(Actual);Serial.print(", ");
+	Serial.print("Error = ");Serial.print(Error);Serial.print(", ");
+	Serial.print("Output Duty = ");Serial.print(Duty);Serial.print(", ");Serial.println(DutyCycle);
 }
