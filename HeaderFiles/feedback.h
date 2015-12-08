@@ -2,7 +2,7 @@
 #define FEEDBACK_h
 
 
-int calcFeedback (int feedback);
+int calcFeedback (int Vopto);
 
 
 #endif DISPLAY_H

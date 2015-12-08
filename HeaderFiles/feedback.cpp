@@ -2,7 +2,7 @@
 #include <arduino.h>
 #include <avr/io.h>
 
-int calcFeedback(int feedback){
+int calcFeedback(int Vopto){
 
 	//Reads a PWM signal's duty cycle and frequency.
 	double duty;
@@ -11,11 +11,11 @@ int calcFeedback(int feedback){
 	long lowTime = 0;
 	long tempPulse;
 	
-	tempPulse = pulseIn(feedback,HIGH);
+	tempPulse = pulseIn(Vopto,HIGH);
 	if(tempPulse>highTime){
 		highTime = tempPulse;
 	}
-	tempPulse = pulseIn(feedback,LOW);
+	tempPulse = pulseIn(Vopto,LOW);
 	if(tempPulse>lowTime){
 		lowTime = tempPulse;
 	}
