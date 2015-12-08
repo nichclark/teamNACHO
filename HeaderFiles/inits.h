@@ -1,6 +1,6 @@
 #ifndef INITS_H
 #define INITS_H
 
-void initializations();
+void initializations(int SampleTime);
 
 #endif
