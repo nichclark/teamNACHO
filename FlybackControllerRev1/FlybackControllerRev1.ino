@@ -1,212 +1,79 @@
-// PID Loop Program
 
+// These variables correspond to pins on the Arduino
 
-#include "Wire.h"
-#include "Adafruit_LEDBackpack.h"
-#include "Adafruit_GFX.h"
-
-Adafruit_7segment matrix = Adafruit_7segment();
-
-#define constFive 5
-//#define PWMOutput 6
-
-//#define feedback 13
-
-#define button2 7
-#define button 8
-
-
-int PWMOutput = 6;
 int pot = A0;
 int feedback = A1;
+int Switch = 3;
+int Vopto = 4;
+int PWMOutput = 6;
+// These global variables are initialized and set to zero
+long LastTime = 0;
+int OutputSignal = 0;
+int Last = 0;
+int Integral = 0;
+int DutyCycle = 0;
+int Error = 0;
+int P = 0;
+int I = 0;
+int D = 0;
+int Duty = 0;
+int Actual = 0;
+int Desired = 0;
 
-// A4 = DAT
-// A5 = CLC
+//The follow varables are what get used in the PID loop
+int kP = 0.2; //proportional constant
+int kI = 1; //integral constant
+int kD = 0; //derivative constant
+int IntegralRange = 500; //sets when the intergral term start taking effect
+long SampleTime = 50; //how often PID loop runs in miliseconds
 
-
-/*-------------------------------------------*/
-int kP = 1.9;
-int kD = .95;
-int kI = 0.25;
-int IntegralRange = 25;
-long SampleTime = 25; //miliseconds
-/*-------------------------------------------*/
+#include "feedback.h"
+int var = 0;
 
 
 void setup() {
+
+  TCCR0B = (TCCR0B & 0b11111000) | 0x01;
+  TCCR1B = (TCCR1B & 0b11111000) | 0x01;
+  Serial.begin(9600); 
+  pinMode(Vopto,INPUT);
+ // pinMode(5,OUTPUT);
+  //pinMode(6,OUTPUT);
 }
   
 void loop() {
-  double DutyCycle;
-  long LastTime;
-  int CurrentTime = millis()/64;
-
-  //int num = WhatTheNumber();  //num is in "centi"volts
-  //displayValue(num);
-  //double Desired = (((num/100)/3)*1023)/5; //Convert num to 1024
-  int Desired = analogRead(0);
-  double Actual = calcFeedback();
-  //Serial.println(feedback);
-  Serial.println(analogRead(0));
-  
-  
-  if(CurrentTime >= LastTime + SampleTime){
-    DutyCycle = PIDcontroller(Desired,Actual);
-    LastTime = CurrentTime;
-  }
-  analogWrite(PWMOutput, DutyCycle);
-  //analogWrite(constFive, (165));
-
-
-}
-
-
-
-
-int calcFeedback(){
-
-  //Reads a PWM signal's duty cycle and frequency.
-  static double duty;
-  static double Vfb;
-  static long highTime = 0;
-  static long lowTime = 0;
-  static long tempPulse;
-  
-  tempPulse = pulseIn(feedback,HIGH);
-  if(tempPulse>highTime){
-    highTime = tempPulse;
-  }
-  tempPulse = pulseIn(feedback,LOW);
-  if(tempPulse>lowTime){
-    lowTime = tempPulse;
-  }
-  duty = highTime/(double (lowTime+highTime));
-
-  Vfb = 255*duty;
-  Vfb = map(Vfb, 0, 255, 0, 1024);
-  
-  return Vfb;
-}
-
-int PIDcontroller(double Desired, double Actual){
-  double Last;
-  double Integral;
-  double Error = Desired - Actual;   //calculate the error
-  
-  if(abs(Error) < IntegralRange){
-    Integral = Integral + Error;
-  }
-  else{
-    Integral = 0;
-  }
-  
-  double P = Error * kP;   //multiply error by proportional term
-  double I = Integral * kI;
-  double D = (Last - Actual) * kD;
-  double Duty = P + I + D;
+  //long CurrentTime = millis()/64;
+  //Desired = analogRead(pot);
+  var = 125;
+  int Actual = calcFeedback(Vopto); 
  
-  Duty = map(Duty, 0, 1024, 0, 255);
-  if(Duty > 255){
-    Duty = 255;
-  }
-  if(Duty < 0){
-    Duty = 0;
-  }
-  Last = Actual;
- //Serial.println(Duty);
+  analogWrite(PWMOutput, var);
+  analogWrite(5, 170);
 
-  return Duty;
+  Serial.print("Desired equals ");
+  Serial.print(var);Serial.print(", ");
+  Serial.print("Vopto = ");
+  Serial.println(Actual);
 }
+ /*if(CurrentTime - LastTime > SampleTime){
+   
+    Error = Desired - Actual;   
+    if(abs(Error) < IntegralRange) Integral = Integral + Error;
+    else Integral = 0;
+    P = Error * kP;
+    I = Integral * kI;
+    D = (Last - Actual) * kD;
+    Duty = P + I + D;
+    if(Duty > 1000) Duty = 1000;
+    if(Duty < 0) Duty = 0; 
+    DutyCycle = map(Duty, 0, 1024, 0, 255); 
+    Last = Actual;
+    LastTime = CurrentTime;
 
-/*void displayValue (int value){
-  matrix.print(value,DEC);
-  //matrix.writeDigitNum(1,true);
-  matrix.blinkRate(0);
-  matrix.drawColon(true);
-  matrix.writeDisplay();
-}*/
+    Serial.print("Error equals ");
+    Serial.print(Error);Serial.print(", ");
+    Serial.print("Output Duty = ");
+    Serial.print(Duty);Serial.print(", ");
+    Serial.println(DutyCycle);
+  }*/
 
-int WhatTheNumber (){
-  int x;
-  
-  int bounceTime = 50;
-  int holdTime = 32000;
-
-  int lastReading = LOW;
-  int lastReading2 = LOW;
-
-  int hold = 0;
-  int hold2 = 0;
-
-  int single = 0;
-  int single2 = 0;
-
-  long onTime = 0;
-  long lastSwitchTime = 0;
-  
-  int maxValue = 1250;
-  int minValue = 50;
-  int reading =! digitalRead(button);
-  int reading2 =! digitalRead(button2);
-  
-  //first pressed
-  if (reading == HIGH && lastReading == LOW && reading2 == LOW) {
-    onTime = millis();
-    Serial.println("press");
-    x=x+10;
-  }
-  
-  //held
-  if (reading == HIGH && lastReading == HIGH && reading2 == LOW) {
-    if ((millis() - onTime) > holdTime) {
-      Serial.println("holding");
-      x=x+10;
-      hold = 1;
-    }
-  }
-  
-  //released
-  if (reading == LOW && lastReading == HIGH) {
-    if (hold == 1) {
-      Serial.println("let go");
-      hold = 0;
-    }
-  }
-  
-  lastReading = reading;
-  
-  //DECREMENT SETUP
-  
-  
-  //first pressed
-  if (reading2 == HIGH && lastReading2 == LOW && reading == LOW) {
-    onTime = millis();
-    Serial.println("press");
-    x=x-10;
-  }
-  
-  //held
-  if (reading2 == HIGH && lastReading2 == HIGH && reading == LOW) {
-    if ((millis() - onTime) > holdTime) {
-      Serial.println("holding");
-      x=x-10;
-      hold2 = 1;
-    }
-  }
-  
-  //released
-  if (reading2 == LOW && lastReading2 == HIGH) {
-    if (hold2 == 1) {
-      Serial.println("let go");
-      hold2 = 0;
-    }
-  }
-  if(x > maxValue){
-    x = maxValue;
-  }
-  if(x < minValue){
-    x = minValue;
-  }
-  lastReading2 = reading2;
-  return x;
-}
