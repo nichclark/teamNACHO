@@ -9,6 +9,7 @@ AI2/DO-Pin4 |3       6| PWM-Pin1
 int Out = 0;
 int FBack = 3;
 void setup() {
+  analogReference(DEFAULT);
   pinMode(Out, OUTPUT);
   //pinMode(FBack, INPUT);
 }
