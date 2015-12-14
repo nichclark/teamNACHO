@@ -20,7 +20,7 @@ int ConstOutput = 10; //pin D10
 //pin A5 = CLK for 7segDisplay
 
 //Define variables that set the max range of the power supply (x100)
-int maxValue = 1250;
+int maxValue = 1500;
 int minValue = 50;
 int SetDuty = 160;
 // These global variables are initialized and set to zero
@@ -41,8 +41,8 @@ int j;
 int maxx = 0;
 
 int bounceTime = 50;
-int holdTime = 25000;
-int x=0;
+int holdTime = 1800;
+int x=500;
 int lastReading = HIGH;
 int lastReading2 = HIGH;
 int hold = 0;
@@ -51,6 +51,8 @@ int single = 0;
 int single2 = 0;
 long onTime = 0;
 long lastSwitchTime = 0;
+long Vdisp = 0;
+
 
 int Last = 0;
 int Integral = 0;
@@ -88,8 +90,8 @@ void loop() {
   //Serial.println(CurrentTime);
   Desired = userInput();
   //Desired = map(5,0,1250,0,1024);
-  Desired = 600;
-  displayValue(150);
+  //Desired = 600;
+  displayValue(Desired);
   if(CurrentTime > LastTime + SampleTime){
     //Actual = calcFeedback();
     for(i=0; i<20; i++){ 
@@ -221,6 +223,7 @@ int userInput(){
   if(x > maxValue) x = maxValue;
   if(x < minValue) x = minValue;
   lastReading2 = reading2;
+  Serial.println(x);
   return x;
 }
 
