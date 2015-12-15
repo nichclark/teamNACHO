@@ -20,54 +20,10 @@ int ConstOutput = 10; //pin D10
 //pin A5 = CLK for 7segDisplay
 
 //Define variables that set the max range of the power supply (x100)
-int maxValue = 1500;
+int maxValue = 1250;
 int minValue = 50;
-int SetDuty = 160;
 // These global variables are initialized and set to zero
-int DutyCycle = 0;
-long CurrentTime = 0;
-long LastTime = 0;
-int Desired = 0;
-int Actual = 0;
 
-long pwm_value;
-long sum;
-long avg;
-double total;
-double value;
-long final[20];
-int i;
-int j;
-int maxx = 0;
-
-int bounceTime = 50;
-int holdTime = 1800;
-int x=500;
-int lastReading = HIGH;
-int lastReading2 = HIGH;
-int hold = 0;
-int hold2 = 0;
-int single = 0;
-int single2 = 0;
-long onTime = 0;
-long lastSwitchTime = 0;
-long Vdisp = 0;
-
-
-int Last = 0;
-int Integral = 0;
-int Error = 0;
-int P = 0;
-int I = 0;
-int D = 0;
-int Duty = 0;
-
-//The follow varables are what get used in the PID loop
-float kP = 0.2; //proportional constant
-float kI = 0.2; //integral constant
-float kD = 0; //derivative constant
-int IntegralRange = 500; //sets when the intergral term start taking effect
-int SampleTime = 25; //how often PID loop runs in miliseconds
 
 void setup() {
   TCCR1B = (TCCR1B & 0b11111000) | 0x01;
@@ -82,56 +38,29 @@ void setup() {
   pinMode(9,OUTPUT); //Flyback gate PWM
   pinMode(10,OUTPUT); //Constant gate PWM
   matrix.begin(0x70);
-  // Create arrray for the feedback calculation function to use
-  for (i=0; i<20; i++) final[i] = 0;
+
 }
 void loop() {
-  CurrentTime = millis();
-  //Serial.println(CurrentTime);
-  Desired = userInput();
-  //Desired = map(5,0,1250,0,1024);
-  //Desired = 600;
-  displayValue(Desired);
+  double DutyCycle;
+  double SetDuty = 160;
+  long LastTime;
+  long SampleTime = 25; //how often PID loop runs in miliseconds
+  long CurrentTime = millis();
+  //double UserPick = userInput();
+  double UserPick = 500;
+  double Desired = map(UserPick,0,1500,0,1024); //on actual circuit, Vout = [9.8k/(19.6k+9.8k)]Vin = 0.333Vin
+  double Actual = calcFeedback();
   if(CurrentTime > LastTime + SampleTime){
-    //Actual = calcFeedback();
-    for(i=0; i<20; i++){ 
-     do{pwm_value = pulseIn(6, LOW);} while(pwm_value < 10);
-      final[i] = pwm_value;
-      if (i==19){
-        for (j=0; j<20; j++){
-          if(final[j] > maxx){maxx = final[j];}}}}
-    total = maxx/40;
-    Actual = 1024*(100-total)/100;
-
-    Error = Desired - Actual;
-    if(abs(Error) < IntegralRange) Integral = Integral + Error;
-    else Integral = 0;
-    P = Error * kP;
-    I = Integral * kI;
-    D = (Last - Actual) * kD;
-    Duty = P + I + D;
-    if(Duty > 1000) Duty = 1000;
-    if(Duty < 0) Duty = 0;
-    DutyCycle = map(Duty, 0, 1024, 0, 255);
-    Last = Actual;
-    Serial.print("Desired = ");Serial.print(Desired);Serial.print(", ");
-    Serial.print("Actual = ");Serial.print(Actual);Serial.print(", ");
-    Serial.print("Error = ");Serial.print(Error);Serial.print(", ");
-    Serial.print("Output Duty = ");Serial.print(Duty);Serial.print(", ");Serial.println(DutyCycle);
-
-  
-    
+    DutyCycle = PIDcontrol(Desired,Actual);
     LastTime = CurrentTime;
-    maxx=0;
   }
-  analogWrite(PWMOutput, DutyCycle);
+  analogWrite(PWMOutput, 127);
   analogWrite(ConstOutput,SetDuty);
+  
   
 }
 void displayValue (int value){
   int A;int B;int C;int D;
-  //value will have a max value of 1250
-  value = map(value,0,1024,minValue,maxValue);
   A = value/1000;
   B = (value/100) - (A*10);
   C = (value/10) - (A*100) - (B*10);
@@ -145,36 +74,30 @@ void displayValue (int value){
 }
 
 
-int calcFeedback(){
-  
-  for(i=0; i<20; i++){
-    do
-    {
-      pwm_value = pulseIn(6, LOW);
-    } while(pwm_value < 10);
+double calcFeedback(){
+  long lowTime = pulseIn(6, LOW, 5000);
+  double dutyPercent = 1-((float)lowTime / 4000);
+  double value = 1024*dutyPercent;
 
-    final[i] = pwm_value;
-
-    if (i==19){
-      for (j=0; j<20; j++){
-        if(final[j] > maxx){
-          maxx = final[j];
-        }
-     }
-    }  
-  }
-  //Serial.println(maxx);
-  total = maxx/40;
-  
-  value = 1024*(100-total)/100;
-  maxx=0;
-  
-  return (int) value;
+  Serial.print("Low = ");Serial.print(lowTime);Serial.print(", ");
+  Serial.print("Percent = ");Serial.print(dutyPercent);Serial.print(", ");
+  Serial.print("value = ");Serial.println(value);
+  return value;
 }
 
 
-int userInput(){
-
+double userInput(){
+  int bounceTime = 50;
+  int holdTime = 1000;
+  int lastReading = HIGH;
+  int lastReading2 = HIGH;
+  int hold = 0;
+  int hold2 = 0;
+  int single = 0;
+  int single2 = 0;
+  long onTime = 0;
+  double x;
+  ////////////////////////////////////////////
   int reading = digitalRead(PBa);
   int reading2 = digitalRead(PBb);
 
@@ -223,27 +146,37 @@ int userInput(){
   if(x > maxValue) x = maxValue;
   if(x < minValue) x = minValue;
   lastReading2 = reading2;
-  Serial.println(x);
+  //Serial.println(x);
   return x;
 }
 
 
-void PIDcontrol(){
-  Error = Desired - Actual;
+double PIDcontrol(double Desired, double Actual){
+  //The follow varables are what get used in the PID loop
+  float kP = 0.2; //proportional constant
+  float kI = 0.2; //integral constant
+  float kD = 0; //derivative constant
+  double IntegralRange = 500; //sets when the intergral term start taking effect
+  double Integral;
+  double Last;
+  double Error = Desired - Actual;
   if(abs(Error) < IntegralRange) Integral = Integral + Error;
   else Integral = 0;
-  P = Error * kP;
-  I = Integral * kI;
-  D = (Last - Actual) * kD;
-  Duty = P + I + D;
+  double P = Error * kP;
+  double I = Integral * kI;
+  double D = (Last - Actual) * kD;
+  double Duty = P + I + D;
   if(Duty > 1000) Duty = 1000;
   if(Duty < 0) Duty = 0;
-  DutyCycle = map(Duty, 0, 1024, 0, 255);
+  double DutyCycle = map(Duty, 0, 1024, 0, 255);
   Last = Actual;
+  /*
   Serial.print("Desired = ");Serial.print(Desired);Serial.print(", ");
   Serial.print("Actual = ");Serial.print(Actual);Serial.print(", ");
   Serial.print("Error = ");Serial.print(Error);Serial.print(", ");
   Serial.print("Output Duty = ");Serial.print(Duty);Serial.print(", ");Serial.println(DutyCycle);
+  */
+  return DutyCycle;
 }
 
 
