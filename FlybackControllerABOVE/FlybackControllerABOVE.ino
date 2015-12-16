@@ -6,6 +6,9 @@
 #include "PIDcontrol.h"
 #include "feedback.h"
 */
+
+
+
 #include "Wire.h"
 #include "Adafruit_LEDBackpack.h"
 #include "Adafruit_GFX.h"
@@ -21,9 +24,6 @@ Adafruit_7segment matrix = Adafruit_7segment();
 //pin A4 = DAT for 7segDisplay
 //pin A5 = CLK for 7segDisplay
 
-//Define variables that set the max range of the power supply (x100)
-int maxValue = 1250;
-int minValue = 50;
 // These global variables are initialized and set to zero
 
 
@@ -47,9 +47,9 @@ void setup() {
 double DutyCycle;
 void loop() {
 /**/// PID Loop related variables
-  float kP = 0.1; //proportional constant
-  float kI = 0.15; //integral constant
-  float kD = 0; //derivative constant
+  float kP = 0.10; //proportional constant
+  float kI = 0.09; //integral constant
+  float kD = 0.09; //derivative constant
 /**/// Time related variables
   long CurrentTime = millis();
   long LastTime;
@@ -57,8 +57,8 @@ void loop() {
 /**/// PWM related variables
   double SetDuty = 160;
 
-  //double UserPick = userInput();
-  double UserPick = 100;
+  double UserPick = userInput(PBa,PBb);
+  //UserPick = 100;
 
   analogWrite(PWMOutput, DutyCycle);
   analogWrite(ConstOutput,SetDuty);
@@ -100,31 +100,33 @@ float calcFeedback(int sw, int pin){
   dutyPercent = (float) highTime / period;
   if(lowTime == 0) value = 0;
   else value = 1023*dutyPercent;
- 
+/* 
   Serial.print("Low = ");Serial.print(lowTime);Serial.print(", ");
   Serial.print("High = ");Serial.print(highTime);Serial.print(", ");
   Serial.print("Period = ");Serial.print(period);Serial.print(", ");
   Serial.print("% = ");Serial.print(dutyPercent);Serial.print(", ");
-  Serial.print("value = ");Serial.print(value);Serial.print(", /******/ ");
-
+  Serial.print("value = ");Serial.print(value);Serial.print(", ");
+*/
   return value;
 }
 
-
-double userInput(){
-  int bounceTime = 50;
-  int holdTime = 1000;
-  int lastReading = HIGH;
-  int lastReading2 = HIGH;
-  int hold = 0;
-  int hold2 = 0;
-  int single = 0;
-  int single2 = 0;
-  long onTime = 0;
-  double x;
+int bounceTime = 50;
+int holdTime = 1000;
+int lastReading = HIGH;
+int lastReading2 = HIGH;
+int hold = 0;
+int hold2 = 0;
+int single = 0;
+int single2 = 0;
+long onTime = 0;
+double x;
+double userInput(int pushbuttA, int pushbuttB){
+  int maxValue = 1250;
+  int minValue = 50;
+  
   ////////////////////////////////////////////
-  int reading = digitalRead(PBa);
-  int reading2 = digitalRead(PBb);
+  int reading = digitalRead(pushbuttA);
+  int reading2 = digitalRead(pushbuttB);
 
   //first pressed
   if (reading == LOW && lastReading == HIGH && reading2 == HIGH) {
@@ -175,13 +177,15 @@ double userInput(){
   return x;
 }
 
+
+
 float I = 0;
 float PIDcontrol(float Desired, float Actual, float kP, float kI, float kD){
   float maxOut = 800;
   float minOut = 0;
   
   
-  float lastDesired;
+  float lastError;
   float Error = Desired - Actual;
 
   float P = (Error * kP);
@@ -190,15 +194,15 @@ float PIDcontrol(float Desired, float Actual, float kP, float kI, float kD){
   if(I > maxOut) I = maxOut;
   if(I < minOut) I = minOut;
   
-  float D = (Desired - lastDesired ) * kD;
+  float D = (Error - lastError) * kD;
   
-  float Out = P + I - D;
+  float Out = P + I + D;
   if(Out > maxOut) Out = maxOut;
   if(Out < minOut) Out = minOut;
   
   float Duty = map(Out, 0, 1023, 0, 255);
   
-  lastDesired = Desired;
+  lastError = Error;
 
   Serial.print("Des ");Serial.print(Desired);Serial.print(", ");
   Serial.print("Act ");Serial.print(Actual);Serial.print(", ");
