@@ -44,36 +44,33 @@ void setup() {
   pinMode(ConstOutput,OUTPUT); //Constant gate PWM
 }
 
-
+double DutyCycle;
 void loop() {
 /**/// PID Loop related variables
-  float kP = 1; //proportional constant
-  float kI = 0; //integral constant
+  float kP = 0.1; //proportional constant
+  float kI = 0.15; //integral constant
   float kD = 0; //derivative constant
 /**/// Time related variables
   long CurrentTime = millis();
   long LastTime;
   long SampleTime = 25; //how often PID loop runs in miliseconds
 /**/// PWM related variables
-  double DutyCycle; float Desired; float Actual;
   double SetDuty = 160;
 
   //double UserPick = userInput();
-  double UserPick = 500;
+  double UserPick = 100;
 
   analogWrite(PWMOutput, DutyCycle);
-  //analogWrite(PWMOutput, 130);
   analogWrite(ConstOutput,SetDuty);
   displayValue(UserPick);
-  float feedback = calcFeedback(Switch,Vfeedback);
+  
+  float Desired = map(UserPick,0,1500,0,1023); 
+  float Actual = calcFeedback(Switch,Vfeedback);
+  
   if(CurrentTime > LastTime + SampleTime){
-    Desired = map(UserPick,0,1500,0,1023); 
-    Actual = feedback;
-    //if(digitalRead(Vfeedback) == HIGH) DutyCycle = map(Desired, 0, 1023, 0, 255);
     DutyCycle = PIDcontrol(Desired,Actual,kP,kI,kD);
     LastTime = CurrentTime;
   }
-  //Serial.println(DutyCycle);
 }
 
 
@@ -93,22 +90,23 @@ void displayValue (int value){
 
 
 float calcFeedback(int sw, int pin){
-  float standByV = 0.3;
-  long lowTime = 0;
-  float dutyPercent;
-  float value;
-  int i;
-  if(digitalRead(sw) == LOW) value = standByV * 1023 / 5;
-  else{
-    lowTime = pulseIn(pin, LOW, 10000);
-    dutyPercent = 1 - ((float)lowTime / 4000);
-    value = 1023*dutyPercent;
-  }
-/*
+
+  long lowTime; long highTime; long period;
+  float dutyPercent; float value;
+
+  lowTime = pulseIn(pin, LOW, 10000);
+  highTime = pulseIn(pin, HIGH, 10000);
+  period = highTime + lowTime;
+  dutyPercent = (float) highTime / period;
+  if(lowTime == 0) value = 0;
+  else value = 1023*dutyPercent;
+ 
   Serial.print("Low = ");Serial.print(lowTime);Serial.print(", ");
-  Serial.print("Percent = ");Serial.print(dutyPercent);Serial.print(", ");
-  Serial.print("value = ");Serial.println(value);
-*/
+  Serial.print("High = ");Serial.print(highTime);Serial.print(", ");
+  Serial.print("Period = ");Serial.print(period);Serial.print(", ");
+  Serial.print("% = ");Serial.print(dutyPercent);Serial.print(", ");
+  Serial.print("value = ");Serial.print(value);Serial.print(", /******/ ");
+
   return value;
 }
 
@@ -177,39 +175,41 @@ double userInput(){
   return x;
 }
 
-
+float I = 0;
 float PIDcontrol(float Desired, float Actual, float kP, float kI, float kD){
-  float maxOut = 1000;
+  float maxOut = 800;
   float minOut = 0;
+  
   
   float lastDesired;
   float Error = Desired - Actual;
 
   float P = (Error * kP);
   
-  float I = I + (Error * kI);
-  //if(I > maxOut) I = maxOut;
-  //if(I < minOut) I = minOut;
+  I = I + (Error * kI);
+  if(I > maxOut) I = maxOut;
+  if(I < minOut) I = minOut;
   
   float D = (Desired - lastDesired ) * kD;
   
-  float Out = P - D;
+  float Out = P + I - D;
   if(Out > maxOut) Out = maxOut;
   if(Out < minOut) Out = minOut;
   
   float Duty = map(Out, 0, 1023, 0, 255);
   
   lastDesired = Desired;
-/**/
+
   Serial.print("Des ");Serial.print(Desired);Serial.print(", ");
   Serial.print("Act ");Serial.print(Actual);Serial.print(", ");
   Serial.print("Error ");Serial.print(Error);Serial.print(", ");
   Serial.print("P ");Serial.print(P);Serial.print(", ");
   Serial.print("I ");Serial.print(I);Serial.print(", ");
   Serial.print("D ");Serial.print(D);Serial.print(", ");
-  Serial.print("Duty # ");Serial.println(Duty);
+  Serial.print("Out ");Serial.print(Out);Serial.print(", ");
+  Serial.print("Duty ");Serial.println(Duty);
 
-/**/  
+
   return Duty;
 }
 
