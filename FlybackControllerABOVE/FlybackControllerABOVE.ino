@@ -1,16 +1,18 @@
 //Include the following header files
-//#include "inits.h"
-/*#include "display.h"*/
-//#include "userinput.h"
-//#include "PIDcontrol.h"
-//#include "feedback.h"
-
+/*
+#include "inits.h"
+#include "display.h"
+#include "userinput.h"
+#include "PIDcontrol.h"
+#include "feedback.h"
+*/
 #include "Wire.h"
 #include "Adafruit_LEDBackpack.h"
 #include "Adafruit_GFX.h"
 Adafruit_7segment matrix = Adafruit_7segment();
 
 //These variables correspond to pins on the Arduino
+int Switch = 4; //pin D5
 int Vfeedback = 6; //pin D6
 int PBa = 7; //pin D7
 int PBb = 8; //pin D8
@@ -31,7 +33,8 @@ void setup() {
   //Baud rate of serial monitor used for debugging
   Serial.begin(9600);
   millis();
-  
+
+  pinMode(4,INPUT);
   pinMode(6,INPUT_PULLUP); // feedback pin
   pinMode(7,INPUT); //PB1
   pinMode(8,INPUT); //PB2
@@ -40,6 +43,7 @@ void setup() {
   matrix.begin(0x70);
 
 }
+
 void loop() {
   double DutyCycle;
   double SetDuty = 160;
@@ -48,14 +52,16 @@ void loop() {
   long CurrentTime = millis();
   //double UserPick = userInput();
   double UserPick = 500;
+
   double Desired = map(UserPick,0,1500,0,1024); //on actual circuit, Vout = [9.8k/(19.6k+9.8k)]Vin = 0.333Vin
-  double Actual = calcFeedback();
+  double ActualBar = calcFeedback();
   if(CurrentTime > LastTime + SampleTime){
-    DutyCycle = PIDcontrol(Desired,Actual);
+    DutyCycle = PIDcontrol(Desired,ActualBar);
     LastTime = CurrentTime;
   }
-  analogWrite(PWMOutput, 127);
+  analogWrite(PWMOutput, DutyCycle);
   analogWrite(ConstOutput,SetDuty);
+  displayValue(UserPick);
   
   
 }
@@ -75,13 +81,22 @@ void displayValue (int value){
 
 
 double calcFeedback(){
-  long lowTime = pulseIn(6, LOW, 5000);
-  double dutyPercent = 1-((float)lowTime / 4000);
-  double value = 1024*dutyPercent;
+  float standByV = 0.3;
+  long lowTime = 0;
+  double dutyPercent;
+  double value;
+  int i;
+  if(digitalRead(Switch) == LOW) value = standByV * 1023 / 5;
+  else{
+    lowTime = pulseIn(6, LOW, 10000);
+    dutyPercent = 1 - ((float)lowTime / 4000);
+    value = 1024*dutyPercent;
+  }
 
   Serial.print("Low = ");Serial.print(lowTime);Serial.print(", ");
   Serial.print("Percent = ");Serial.print(dutyPercent);Serial.print(", ");
   Serial.print("value = ");Serial.println(value);
+
   return value;
 }
 
@@ -151,31 +166,31 @@ double userInput(){
 }
 
 
-double PIDcontrol(double Desired, double Actual){
+int PIDcontrol(double Desired, double Actual){
   //The follow varables are what get used in the PID loop
-  float kP = 0.2; //proportional constant
-  float kI = 0.2; //integral constant
-  float kD = 0; //derivative constant
-  double IntegralRange = 500; //sets when the intergral term start taking effect
+  double kP = 1; //proportional constant
+  double kI = 0; //integral constant
+  double kD = 0; //derivative constant
+  int IntegralRange = 100; //sets when the intergral term start taking effect
   double Integral;
-  double Last;
-  double Error = Desired - Actual;
+  int Last;
+  int Error = Desired - Actual;
   if(abs(Error) < IntegralRange) Integral = Integral + Error;
   else Integral = 0;
-  double P = Error * kP;
-  double I = Integral * kI;
-  double D = (Last - Actual) * kD;
-  double Duty = P + I + D;
+  int P = Error * kP;
+  int I = Integral * kI;
+  int D = (Last - Actual) * kD;
+  int Duty = P + I + D;
   if(Duty > 1000) Duty = 1000;
   if(Duty < 0) Duty = 0;
-  double DutyCycle = map(Duty, 0, 1024, 0, 255);
+  int DutyCycle = map(Duty, 0, 1024, 0, 255);
   Last = Actual;
-  /*
-  Serial.print("Desired = ");Serial.print(Desired);Serial.print(", ");
-  Serial.print("Actual = ");Serial.print(Actual);Serial.print(", ");
-  Serial.print("Error = ");Serial.print(Error);Serial.print(", ");
-  Serial.print("Output Duty = ");Serial.print(Duty);Serial.print(", ");Serial.println(DutyCycle);
-  */
+
+  Serial.print("Desired ");Serial.print(Desired);Serial.print(", ");
+  Serial.print("Actual ");Serial.print(Actual);Serial.print(", ");
+  Serial.print("Error ");Serial.print(Error);Serial.print(", ");
+  Serial.print("Duty # ");Serial.print(DutyCycle);Serial.print(", ");
+  Serial.print("Duty % ");Serial.println((float)DutyCycle/255*100);
   return DutyCycle;
 }
 
