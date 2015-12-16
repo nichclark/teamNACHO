@@ -2,47 +2,40 @@
 #include <arduino.h>
 #include <avr/io.h>
 
+float I = 0;
+float PIDcontrol(float Desired, float Actual, float kP, float kI, float kD){
+  float maxOut = 800;
+  float minOut = 0;
+  
+  
+  float lastError;
+  float Error = Desired - Actual;
 
-int PIDcontrol(int kP,int kI,int kD,int IntegralRange,int Desired,int Actual){
-	int Last = 0;
-	int Integral = 0;
-	int DutyCycle = 0;
-	int Error = 0;
-	int P = 0;
-	int I = 0;
-	int D = 0;
-	int Duty = 0;
-	
-	//Calculate the error in the output voltage
-	Error = Desired - Actual;
-	//Determine if the Integral should be used in the PID calculation.
-	//The integral is found by adding the new error to the prevous error
-	//By having a range on the Integral, this prevents the integral
-	//value from getting too large.
-	if(abs(Error) < IntegralRange) Integral = Integral + Error;
-	else Integral = 0;
-	//The terms of the PID loop are calculated below:
-	//Multiply error by proportional constant
-	P = Error * kP;
-	//Multiply the integral term by the integral constant
-	I = Integral * kI;
-	//Determine the differenece between the current user input value and
-	//the last user input. This is then multiplied by the derivative constant
-	D = (Last - Actual) * kD;
-	//Add the three terms together to determine the output duty cycle
-	Duty = P + I + D;
-	//A max and min limit were set on the output duty cycle. This was done
-	//to protect the harware.
-	if(Duty > 1000) Duty = 1000;
-	if(Duty < 0) Duty = 0;
-	//The map fxn takes a number between 0 and 1024 and converts it
-	//to be between 0 and 255. This is needed as the analogWrite fxn
-	//needs a value between 0 and 255.
-	DutyCycle = map(Duty, 0, 1024, 0, 255);
-	//Save the current user input to be used to calculate the derivative
-	Last = Actual;
-	Serial.print("Desired = ");Serial.print(Desired);Serial.print(", ");
-	Serial.print("Actual = ");Serial.print(Actual);Serial.print(", ");
-	Serial.print("Error = ");Serial.print(Error);Serial.print(", ");
-	Serial.print("Output Duty = ");Serial.print(Duty);Serial.print(", ");Serial.println(DutyCycle);
+  float P = (Error * kP);
+  
+  I = I + (Error * kI);
+  if(I > maxOut) I = maxOut;
+  if(I < minOut) I = minOut;
+  
+  float D = (Error - lastError) * kD;
+  
+  float Out = P + I + D;
+  if(Out > maxOut) Out = maxOut;
+  if(Out < minOut) Out = minOut;
+  
+  float Duty = map(Out, 0, 1023, 0, 255);
+  
+  lastError = Error;
+
+  Serial.print("Des ");Serial.print(Desired);Serial.print(", ");
+  Serial.print("Act ");Serial.print(Actual);Serial.print(", ");
+  Serial.print("Error ");Serial.print(Error);Serial.print(", ");
+  Serial.print("P ");Serial.print(P);Serial.print(", ");
+  Serial.print("I ");Serial.print(I);Serial.print(", ");
+  Serial.print("D ");Serial.print(D);Serial.print(", ");
+  Serial.print("Out ");Serial.print(Out);Serial.print(", ");
+  Serial.print("Duty ");Serial.println(Duty);
+
+
+  return Duty;
 }
