@@ -2,7 +2,6 @@
 #include <arduino.h>
 #include <avr/io.h>
 
-#define Switch 4 //pin D5
 #define Vfeedback 6 //pin D6
 #define PBa 7 //pin D7
 #define PBb 8 //pin D8
@@ -18,10 +17,8 @@ void initializations(){
 	//Baud rate of serial monitor used for debugging
 	Serial.begin(9600);
 	
-	
 	millis();
 
-	pinMode(Switch,INPUT);
 	pinMode(Vfeedback,INPUT_PULLUP); // feedback pin
 	pinMode(PBa,INPUT); //PB1
 	pinMode(PBb,INPUT); //PB2
