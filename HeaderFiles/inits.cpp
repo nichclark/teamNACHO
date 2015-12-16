@@ -2,33 +2,31 @@
 #include <arduino.h>
 #include <avr/io.h>
 
-void initializations(int SampleTime){
-	
-	TCCR0A = 0;
-	TCCR0B = 0;
-	TCNT1 = 0; //Set counter to 0
-	TCCR0A |= (1 << WGM00) | (1 << WGM01) ; //Phase-correct PWM
-	TCCR0A |= (1 << COM0A1) | (1 << COM0B1); //None-inverted mode (High at bottom, Low on match)
-	TCCR0B |= (0 << CS02) | (0 << CS01) | (1 << CS00); //No pre-scaler
-		
-	TCCR1A = 0;
-	TCCR1B = 0;
-	TCNT1 = 0; //Set counter to 0
-	TCCR1B |= (1 << WGM12); //Set the interrupt in CTC mode so that OCR1A is the top
-	OCR1A = 16000000/256/1000*SampleTime; //Create an interrupt at the desired sample time
-	TCCR1B |= (1 << CS12) | (0 << CS11) | (0 << CS10); //No pre-scaler
-	TIMSK1 |= (1 << OCIE1A); //Enable the interrupt
-	
+#define Switch 4 //pin D5
+#define Vfeedback 6 //pin D6
+#define PBa 7 //pin D7
+#define PBb 8 //pin D8
+#define PWMOutput  9 //pin D9
+#define ConstOutput  10 //pin D10
+//pin A4 = DAT for 7segDisplay
+//pin A5 = CLK for 7segDisplay
 
+void initializations(){
+
+	TCCR1B = (TCCR1B & 0b11111000) | 0x01;
+	
 	//Baud rate of serial monitor used for debugging
 	Serial.begin(9600);
 	
-	pinMode(4,INPUT);
-	pinMode(5,OUTPUT); 
-	pinMode(6,OUTPUT); 
-	pinMode(7,INPUT);
-	pinMode(8,INPUT);
-	pinMode(A4,OUTPUT);
-	pinMode(A5,OUTPUT);  
+	
+	millis();
+
+	pinMode(Switch,INPUT);
+	pinMode(Vfeedback,INPUT_PULLUP); // feedback pin
+	pinMode(PBa,INPUT); //PB1
+	pinMode(PBb,INPUT); //PB2
+	pinMode(PWMOutput,OUTPUT); //Flyback gate PWM
+	pinMode(ConstOutput,OUTPUT); //Constant gate PWM
+	
 	
 }
