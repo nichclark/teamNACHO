@@ -2,27 +2,24 @@
 #include <arduino.h>
 #include <avr/io.h>
 
-int calcFeedback(int Vopto){
 
-	//Reads a PWM signal's duty cycle and frequency.
-	double duty;
-	double Vfb;
-	long highTime = 0;
-	long lowTime = 0;
-	long tempPulse;
-	
-	tempPulse = pulseIn(Vopto,HIGH);
-	if(tempPulse>highTime){
-		highTime = tempPulse;
-	}
-	tempPulse = pulseIn(Vopto,LOW);
-	if(tempPulse>lowTime){
-		lowTime = tempPulse;
-	}
-	duty = highTime/(double (lowTime+highTime));
+float calcFeedback(int pin){
 
-	Vfb = 255*duty;
-	Vfb = map(Vfb, 0, 255, 0, 1024);
-	
-	return (int) Vfb;
+  long lowTime; long highTime; long period;
+  float dutyPercent; float value;
+
+  lowTime = pulseIn(pin, LOW, 10000);
+  highTime = pulseIn(pin, HIGH, 10000);
+  period = highTime + lowTime;
+  dutyPercent = (float) highTime / period;
+  if(lowTime == 0) value = 0;
+  else value = 1023*dutyPercent;
+/* 
+  Serial.print("Low = ");Serial.print(lowTime);Serial.print(", ");
+  Serial.print("High = ");Serial.print(highTime);Serial.print(", ");
+  Serial.print("Period = ");Serial.print(period);Serial.print(", ");
+  Serial.print("% = ");Serial.print(dutyPercent);Serial.print(", ");
+  Serial.print("value = ");Serial.print(value);Serial.print(", ");
+*/
+  return value;
 }
