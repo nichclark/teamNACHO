@@ -1,220 +1,95 @@
-//Include the following header files
 /*
+TITLE("TeamNACHO USB Power Supply");
+SUBTITLE("Design Review Main Code");
+BY("Adam S. Hastings && Nicholas P. Clark");
+DATE("17 December 2015");
+
+This code is to be used with design review circuit. This circuit
+takes 5VDC input and the output ranges between 1VDC and 12VDC.
+For the design review circuit, the output ground is isolated from
+the main supply ground. To do this, a second flyback circuit was
+IMPLEMENTED to create a secondary side 5VDC supply, which was
+used to power an ATtiny85. This second microcontroller takes the
+circuit's output voltage and transmits back to the main controller
+by varying the duty cycle of a PWM fuction. 
+*/
+// Header files created and used by TeamNACHO
 #include "inits.h"
-#include "display.h"
-#include "userinput.h"
 #include "PIDcontrol.h"
 #include "feedback.h"
-*/
-
-
-
+#include "userinput.h"
+// Header files needed to communicate with Adafruit 7seg Display
 #include "Wire.h"
 #include "Adafruit_LEDBackpack.h"
 #include "Adafruit_GFX.h"
 Adafruit_7segment matrix = Adafruit_7segment();
 
-//These variables correspond to pins on the Arduino
+//These are the pins being used on the Arduino Uno
 #define Switch 4 //pin D5
 #define Vfeedback 6 //pin D6
 #define PBa 7 //pin D7
 #define PBb 8 //pin D8
-#define PWMOutput  9 //pin D9
-#define ConstOutput  10 //pin D10
+#define varyOutput  9 //pin D9
+#define constOutput  10 //pin D10
 //pin A4 = DAT for 7segDisplay
 //pin A5 = CLK for 7segDisplay
 
-// These global variables are initialized and set to zero
-
+// The duty cycle that controls the varyOutput (the main flyback)
+float DutyCycle;
 
 void setup() {
-  TCCR1B = (TCCR1B & 0b11111000) | 0x01;
-  
-  //Baud rate of serial monitor used for debugging
-  Serial.begin(9600);
+  //Call TeamNACHO initialization fxn to intialize clock and pins
+  initializations();
+  //Start communication with 7seg
   matrix.begin(0x70);
-  
-  millis();
-
-  pinMode(Switch,INPUT);
-  pinMode(Vfeedback,INPUT_PULLUP); // feedback pin
-  pinMode(PBa,INPUT); //PB1
-  pinMode(PBb,INPUT); //PB2
-  pinMode(PWMOutput,OUTPUT); //Flyback gate PWM
-  pinMode(ConstOutput,OUTPUT); //Constant gate PWM
 }
 
-double DutyCycle;
 void loop() {
-/**/// PID Loop related variables
-  float kP = 0.10; //proportional constant
-  float kI = 0.09; //integral constant
-  float kD = 0.09; //derivative constant
-/**/// Time related variables
+/// PID Loop related variables
+  float kP = 0.08; //proportional constant
+  float kI = 0.08; //integral constant
+  float kD = 0.00; //derivative constant
+  
+/// Time related variables
   long CurrentTime = millis();
   long LastTime;
-  long SampleTime = 25; //how often PID loop runs in miliseconds
-/**/// PWM related variables
-  double SetDuty = 160;
+  long SampleTime = 10; //how often PID loop runs in miliseconds
+/// PWM related variables
+  int SetDuty = 160; //used for constOutput flyback
+  //Determine desired output voltage with TeamNACHO fxn
+  float UserPick = userInput(PBa,PBb); 
 
-  double UserPick = userInput(PBa,PBb);
-  //UserPick = 100;
-
-  analogWrite(PWMOutput, DutyCycle);
-  analogWrite(ConstOutput,SetDuty);
+  //Output the two PWM signals to drive flybacks
+  analogWrite(varyOutput, DutyCycle);
+  analogWrite(constOutput, SetDuty);
+  //Display desired output voltage with TeamNACHO fxn
   displayValue(UserPick);
   
-  float Desired = map(UserPick,0,1500,0,1023); 
-  float Actual = calcFeedback(Switch,Vfeedback);
-  
+  float Desired = map(UserPick,0,1500,0,1023); //unit conversion
+  //Decode transmitted PWM signal from ATtiny with TeamNACHO fxn
+  float Actual = calcFeedback(Vfeedback);
+  //Run PID Loop at a desired sample time
   if(CurrentTime > LastTime + SampleTime){
+    //Calculate what duty cycle is for varyOutput with TeamNACHO fxn
     DutyCycle = PIDcontrol(Desired,Actual,kP,kI,kD);
     LastTime = CurrentTime;
   }
 }
 
-
+//TeamNACHO fxn to display desired voltage to 7seg
 void displayValue (int value){
   int A;int B;int C;int D;
+  //Need to determine what digit to write to each position of display
   A = value/1000;
   B = (value/100) - (A*10);
   C = (value/10) - (A*100) - (B*10);
   D = (value/1) - (A*1000) - (B*100) - (C*10);
-  
+  //Following fxns are from Adafruit Backpack library
   matrix.writeDigitNum(0,A);
   matrix.writeDigitNum(1,B,true);
   matrix.writeDigitNum(3,C);
   matrix.writeDigitNum(4,D);
   matrix.writeDisplay();
-}
-
-
-float calcFeedback(int sw, int pin){
-
-  long lowTime; long highTime; long period;
-  float dutyPercent; float value;
-
-  lowTime = pulseIn(pin, LOW, 10000);
-  highTime = pulseIn(pin, HIGH, 10000);
-  period = highTime + lowTime;
-  dutyPercent = (float) highTime / period;
-  if(lowTime == 0) value = 0;
-  else value = 1023*dutyPercent;
-/* 
-  Serial.print("Low = ");Serial.print(lowTime);Serial.print(", ");
-  Serial.print("High = ");Serial.print(highTime);Serial.print(", ");
-  Serial.print("Period = ");Serial.print(period);Serial.print(", ");
-  Serial.print("% = ");Serial.print(dutyPercent);Serial.print(", ");
-  Serial.print("value = ");Serial.print(value);Serial.print(", ");
-*/
-  return value;
-}
-
-int bounceTime = 50;
-int holdTime = 1000;
-int lastReading = HIGH;
-int lastReading2 = HIGH;
-int hold = 0;
-int hold2 = 0;
-int single = 0;
-int single2 = 0;
-long onTime = 0;
-double x;
-double userInput(int pushbuttA, int pushbuttB){
-  int maxValue = 1250;
-  int minValue = 50;
-  
-  ////////////////////////////////////////////
-  int reading = digitalRead(pushbuttA);
-  int reading2 = digitalRead(pushbuttB);
-
-  //first pressed
-  if (reading == LOW && lastReading == HIGH && reading2 == HIGH) {
-    onTime = millis();
-    x=x+5;
-  }
-  
-  //held
-  if (reading == LOW && lastReading == LOW && reading2 == HIGH) {
-    if ((millis() - onTime) > holdTime) {
-      x=x+5;
-      hold = 1;
-    }
-  }
-  
-  //released
-  if (reading == HIGH && lastReading == LOW) {
-    if (hold == 1) hold = 0;
-  }
-  
-  lastReading = reading;
-  
-  //DECREMENT SETUP
-  
-  
-  //first pressed
-  if (reading2 == LOW && lastReading2 == HIGH && reading == HIGH) {
-    onTime = millis();
-    x=x-5;
-  }
-  
-  //held
-  if (reading2 == LOW && lastReading2 == LOW && reading == HIGH) {
-    if ((millis() - onTime) > holdTime) {
-      x=x-5;
-      hold2 = 1;
-    }
-  }
-  
-  //released
-  if (reading2 == HIGH && lastReading2 == LOW) {
-    if (hold2 == 1) hold2 = 0;
-  }
-  if(x > maxValue) x = maxValue;
-  if(x < minValue) x = minValue;
-  lastReading2 = reading2;
-  //Serial.println(x);
-  return x;
-}
-
-
-
-float I = 0;
-float PIDcontrol(float Desired, float Actual, float kP, float kI, float kD){
-  float maxOut = 800;
-  float minOut = 0;
-  
-  
-  float lastError;
-  float Error = Desired - Actual;
-
-  float P = (Error * kP);
-  
-  I = I + (Error * kI);
-  if(I > maxOut) I = maxOut;
-  if(I < minOut) I = minOut;
-  
-  float D = (Error - lastError) * kD;
-  
-  float Out = P + I + D;
-  if(Out > maxOut) Out = maxOut;
-  if(Out < minOut) Out = minOut;
-  
-  float Duty = map(Out, 0, 1023, 0, 255);
-  
-  lastError = Error;
-
-  Serial.print("Des ");Serial.print(Desired);Serial.print(", ");
-  Serial.print("Act ");Serial.print(Actual);Serial.print(", ");
-  Serial.print("Error ");Serial.print(Error);Serial.print(", ");
-  Serial.print("P ");Serial.print(P);Serial.print(", ");
-  Serial.print("I ");Serial.print(I);Serial.print(", ");
-  Serial.print("D ");Serial.print(D);Serial.print(", ");
-  Serial.print("Out ");Serial.print(Out);Serial.print(", ");
-  Serial.print("Duty ");Serial.println(Duty);
-
-
-  return Duty;
 }
 
 
